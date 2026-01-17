@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Successful - BIG QUAMS MEDIA</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {font-family:'Roboto',sans-serif; background:#f0f4ff; color:#333; text-align:center; padding:50px;}
+.receipt {max-width:600px; margin:0 auto; background:#fff; padding:30px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1); text-align:left;}
+.receipt-header {text-align:center; margin-bottom:30px;}
+.receipt-header img {max-width:120px; margin-bottom:10px;}
+.receipt-header h1 {color:#0052cc; margin-bottom:5px; font-size:2rem;}
+.receipt-header p {font-size:1rem; color:#555;}
+.receipt-body p {font-size:1.1rem; margin:8px 0;}
+.receipt-footer {margin-top:30px; text-align:center;}
+.btn {margin:10px 5px; padding:12px 30px; border:none; border-radius:50px; background:linear-gradient(45deg,#ffd500,#ffc700); color:#000; font-weight:bold; cursor:pointer; transition:0.3s; text-decoration:none; display:inline-block;}
+.btn:hover {transform:scale(1.05);}
+@media print { body {background:#fff; padding:0;} .btn,a {display:none;} .receipt {box-shadow:none; margin:0; border-radius:0; width:100%;} }
+</style>
+</head>
+<body>
+
+<div class="receipt">
+<div class="receipt-header">
+<img src="https://ik.imagekit.io/bigquamsmedia/BIG%20QUAMS%20EDUCATIONAL%20HUB%20.png" alt="BIG QUAMS MEDIA Logo">
+<h1>Payment Receipt</h1>
+<p>BIG QUAMS MEDIA — The plug for all student info</p>
+</div>
+
+<div class="receipt-body">
+<p><strong>Service:</strong> <span id="serviceName"></span></p>
+<p><strong>Amount Paid:</strong> ₦<span id="amountPaid"></span></p>
+<p><strong>Transaction Fee (hidden):</strong> ₦<span id="fee">50</span></p>
+<p><strong>Total Collected:</strong> ₦<span id="totalCollected"></span></p>
+<p><strong>Payment Reference:</strong> <span id="paymentRef"></span></p>
+<p><strong>Date:</strong> <span id="paymentDate"></span></p>
+</div>
+
+<div class="receipt-footer">
+<button class="btn" id="printBtn">Print / Save Receipt</button>
+<a href="index.html" class="btn">Back to Services</a>
+</div>
+</div>
+
+<script>
+const transactionFee = 50;
+const urlParams = new URLSearchParams(window.location.search);
+const service = urlParams.get('service');
+const amount = parseFloat(urlParams.get('amount')) || 0;
+const ref = urlParams.get('ref');
+
+if(service) document.getElementById('serviceName').innerText = service;
+if(amount) document.getElementById('amountPaid').innerText = amount.toLocaleString();
+document.getElementById('paymentRef').innerText = ref;
+document.getElementById('totalCollected').innerText = (amount + transactionFee).toLocaleString();
+document.getElementById('paymentDate').innerText = new Date().toLocaleString();
+
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+</script>
+
+</body>
+</html>
