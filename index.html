@@ -3,158 +3,206 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIG QUAMS MEDIA Payment</title>
+  <title>BIG QUAMS MEDIA - The plug for all student info</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Global Styles */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #fef9c3, #3b82f6);
-      color: #1f2937;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Roboto',sans-serif;background:#f5f7fa;color:#333;scroll-behavior:smooth;}
+    a{text-decoration:none;color:inherit;}
 
-    /* Container */
-    .payment-container {
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 450px;
-      text-align: center;
-    }
+    /* Header */
+    header{background:linear-gradient(135deg,#0052cc 0%,#0080ff 100%);color:white;text-align:center;padding:80px 20px;position:relative;}
+    header img{max-width:120px;margin-bottom:15px;display:block;margin-left:auto;margin-right:auto;}
+    header h1{font-size:3rem;margin-bottom:10px;font-weight:700;}
+    header p{font-size:1.3rem;margin-bottom:20px;}
+    header .btn{background:#ffd500;color:#000;padding:15px 35px;border-radius:50px;font-weight:bold;transition:0.3s;display:inline-block;}
+    header .btn:hover{background:#ffc700;transform:scale(1.05);}
 
-    h2 {
-      margin-bottom: 30px;
-      color: #1e40af;
-    }
+    /* About */
+    #about{padding:80px 20px;text-align:center;background:#fff;}
+    #about h2{font-size:2.2rem;margin-bottom:20px;color:#0052cc;position:relative;}
+    #about h2::after{content:"";width:60px;height:3px;background:#ffd500;display:block;margin:10px auto;border-radius:2px;}
+    #about p{font-size:1.1rem;max-width:700px;margin:0 auto;line-height:1.8;}
 
-    label {
-      display: block;
-      text-align: left;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
+    /* Services */
+    #services{padding:80px 20px;background:#f0f4ff;text-align:center;}
+    #services h2{font-size:2.2rem;margin-bottom:50px;color:#0052cc;position:relative;}
+    #services h2::after{content:"";width:60px;height:3px;background:#ffd500;display:block;margin:10px auto;border-radius:2px;}
+    .services-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;max-width:1200px;margin:0 auto;}
+    .service-card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.4s;opacity:0;transform:translateY(40px;text-align:center);}
+    .service-card.visible{opacity:1;transform:translateY(0);}
+    .service-card img{max-width:60px;margin-bottom:10px;}
+    .service-card h3{color:#0052cc;margin-bottom:10px;}
+    .service-card p{margin-bottom:15px;font-weight:bold;font-size:1.1rem;}
+    .service-card button{background:linear-gradient(45deg,#ffd500,#ffc700);color:#000;padding:12px 25px;border-radius:50px;font-weight:bold;transition:0.3s;display:inline-block;border:none;cursor:pointer;}
+    .service-card button:hover{transform:scale(1.05);}
+    .service-card input{width:100%;padding:10px;margin-bottom:15px;border-radius:8px;border:1px solid #ccc;font-size:1rem;}
 
-    select, input {
-      width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 20px;
-      border: 2px solid #3b82f6;
-      border-radius: 10px;
-      font-size: 16px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
+    /* Contact & Form */
+    #contact{padding:80px 20px;text-align:center;background:#fff;}
+    #contact h2{font-size:2.2rem;margin-bottom:30px;color:#0052cc;position:relative;}
+    #contact h2::after{content:"";width:60px;height:3px;background:#ffd500;display:block;margin:10px auto;border-radius:2px;}
+    #contact p{margin-bottom:15px;font-size:1.1rem;}
+    #contact a{color:#0080ff;font-weight:bold;}
+    form{max-width:500px;margin:30px auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);}
+    form h3{text-align:center;color:#0052cc;margin-bottom:20px;}
+    form input, form textarea, form button{width:100%;padding:12px;margin-bottom:15px;border-radius:8px;border:1px solid #ccc;font-size:1rem;}
+    form button{background:linear-gradient(45deg,#0052cc,#0080ff);color:#fff;border:none;cursor:pointer;transition:0.3s;font-weight:bold;}
+    form button:hover{transform:scale(1.03);}
 
-    select:focus, input:focus {
-      border-color: #facc15; /* Yellow on focus */
-    }
+    /* Footer */
+    footer{background:#0052cc;color:white;text-align:center;padding:25px;font-size:0.9rem;}
 
-    button {
-      background: #facc15; /* Yellow */
-      color: #1e40af; /* Blue text */
-      border: none;
-      padding: 15px 0;
-      width: 100%;
-      font-size: 18px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
+    /* Floating WhatsApp Button */
+    #whatsappBtn{position:fixed;bottom:25px;right:25px;background:#25d366;color:white;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 5px 15px rgba(0,0,0,0.3);transition:0.3s;z-index:1000;}
+    #whatsappBtn:hover{transform:scale(1.1);}
 
-    button:hover {
-      background: #eab308; /* Darker yellow */
-      transform: translateY(-2px);
-    }
-
-    #customAmountDiv {
-      margin-bottom: 20px;
+    @media(max-width:600px){
+      header h1{font-size:2.2rem;}
+      header p{font-size:1.1rem;}
+      .service-card{padding:20px;}
+      form{padding:20px;}
     }
   </style>
 </head>
 <body>
 
-  <div class="payment-container">
-    <h2>BIG QUAMS MEDIA Payment</h2>
+<a href="https://wa.me/2349049871643" target="_blank" id="whatsappBtn">💬</a>
 
-    <label for="service">Select Service:</label>
-    <select id="service">
-      <option value="10000">Educational Consultation - ₦10,000</option>
-      <option value="5000">Graphic Design - ₦5,000</option>
-      <option value="custom">Other Service / Custom Amount</option>
-    </select>
+<header>
+  <img src="https://ik.imagekit.io/bigquamsmedia/BIG%20QUAMS%20EDUCATIONAL%20HUB%20.png" alt="BIG QUAMS MEDIA Logo">
+  <h1>BIG QUAMS MEDIA</h1>
+  <p>The plug for all student info</p>
+  <a href="https://wa.me/2349049871643" class="btn" target="_blank">Contact on WhatsApp</a>
+</header>
 
-    <div id="customAmountDiv" style="display:none;">
-      <label for="customAmount">Enter Amount (₦):</label>
-      <input type="number" id="customAmount" placeholder="Enter amount" min="100">
+<section id="about">
+  <h2>About Us</h2>
+  <p>BIG QUAMS MEDIA is your trusted educational consultant, providing verified student info, certificates, guidance, and payment solutions for school-related services. We help students achieve their academic goals with authenticity and convenience.</p>
+</section>
+
+<section id="services">
+  <h2>Our Services</h2>
+  <div class="services-container">
+    <div class="service-card">
+      <h3>Original JAMB Results</h3>
+      <p>3,000₦</p>
+      <button class="payButton" data-service="Original JAMB Results" data-amount="3000">Pay Now</button>
     </div>
-
-    <button id="payButton">Pay Now</button>
+    <div class="service-card">
+      <h3>Original WAEC/GCE Certificate (1999–2025)</h3>
+      <p>30,000₦</p>
+      <button class="payButton" data-service="Original WAEC/GCE Certificate" data-amount="30000">Pay Now</button>
+    </div>
+    <div class="service-card">
+      <h3>JAMB Admission Letter</h3>
+      <p>3,000₦</p>
+      <button class="payButton" data-service="JAMB Admission Letter" data-amount="3000">Pay Now</button>
+    </div>
+    <div class="service-card">
+      <h3>Consultation & Guidance</h3>
+      <p>10,000₦</p>
+      <button class="payButton" data-service="Consultation & Guidance" data-amount="10000">Pay Now</button>
+    </div>
+    <div class="service-card">
+      <h3>WAEC Scratch Card</h3>
+      <p>4,500₦</p>
+      <button class="payButton" data-service="WAEC Scratch Card" data-amount="4500">Pay Now</button>
+    </div>
+    <div class="service-card">
+      <h3>NECO Scratch Card</h3>
+      <p>2,500₦</p>
+      <button class="payButton" data-service="NECO Scratch Card" data-amount="2500">Pay Now</button>
+    </div>
+    <div class="service-card">
+      <h3>NECO e-Verify Token</h3>
+      <p>6,000₦</p>
+      <button class="payButton" data-service="NECO e-Verify Token" data-amount="6000">Pay Now</button>
+    </div>
+    <div class="service-card">
+      <h3>Payment of Fees / Other Service</h3>
+      <input type="text" class="customServiceName" placeholder="Enter Service Name" required>
+      <input type="number" class="customServiceAmount" placeholder="Enter Amount (₦)" min="1" required>
+      <button class="payCustomButton">Pay Now</button>
+    </div>
   </div>
+</section>
 
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-  <script>
-    const serviceSelect = document.getElementById('service');
-    const customAmountDiv = document.getElementById('customAmountDiv');
-    const payButton = document.getElementById('payButton');
+<section id="contact">
+  <h2>Contact & Consultation Booking</h2>
+  <p>WhatsApp: <a href="https://wa.me/2349049871643" target="_blank">+2349049871643</a></p>
+  <p>Email: <a href="mailto:bigquamsmedia024@gmail.com">bigquamsmedia024@gmail.com</a></p>
 
-    // Show/hide custom amount input
-    serviceSelect.addEventListener('change', () => {
-      if (serviceSelect.value === 'custom') {
-        customAmountDiv.style.display = 'block';
-      } else {
-        customAmountDiv.style.display = 'none';
-      }
+  <form id="bookingForm">
+    <h3>Book a Consultation</h3>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <textarea id="message" placeholder="Message / Consultation Details" rows="4" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+</section>
+
+<footer>
+  &copy; 2026 BIG QUAMS MEDIA. All Rights Reserved.
+</footer>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+const transactionFee = 50;
+
+const cards = document.querySelectorAll('.service-card');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
+},{threshold:0.2});
+cards.forEach(card => observer.observe(card));
+
+document.querySelectorAll('.payButton').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const serviceName = btn.getAttribute('data-service');
+    const amount = parseFloat(btn.getAttribute('data-amount'));
+    const total = amount + transactionFee;
+    const handler = PaystackPop.setup({
+      key: 'pk_live_fdb0c418d6e08f7e5b2ebe66d4d50b02020c9c93',
+      email: prompt("Enter your email address"),
+      amount: total * 100,
+      currency: 'NGN',
+      ref: 'BQ-'+Math.floor(Math.random()*1000000000+1),
+      metadata: { custom_fields:[{display_name:"Service", variable_name:"service", value:serviceName}] },
+      callback: function(response){
+        window.location.href = `thankyou.html?service=${encodeURIComponent(serviceName)}&amount=${encodeURIComponent(amount)}&ref=${encodeURIComponent(response.reference)}`;
+      },
+      onClose: function(){ alert('Payment window closed'); }
     });
+    handler.openIframe();
+  });
+});
 
-    payButton.addEventListener('click', () => {
-      let amount;
-      let serviceName = serviceSelect.options[serviceSelect.selectedIndex].text;
+document.querySelector('.payCustomButton').addEventListener('click', () => {
+  const serviceName = document.querySelector('.customServiceName').value.trim();
+  const amount = parseFloat(document.querySelector('.customServiceAmount').value);
+  if(!serviceName || !amount || amount<1){ alert("Enter valid service and amount"); return; }
+  const total = amount + transactionFee;
+  const handler = PaystackPop.setup({
+    key: 'pk_live_fdb0c418d6e08f7e5b2ebe66d4d50b02020c9c93',
+    email: prompt("Enter your email address"),
+    amount: total * 100,
+    currency: 'NGN',
+    ref: 'BQ-'+Math.floor(Math.random()*1000000000+1),
+    metadata: { custom_fields:[{display_name:"Service", variable_name:"service", value:serviceName}] },
+    callback: function(response){
+      window.location.href = `thankyou.html?service=${encodeURIComponent(serviceName)}&amount=${encodeURIComponent(amount)}&ref=${encodeURIComponent(response.reference)}`;
+    },
+    onClose: function(){ alert('Payment window closed'); }
+  });
+  handler.openIframe();
+});
 
-      if (serviceSelect.value === 'custom') {
-        const customAmount = parseFloat(document.getElementById('customAmount').value);
-        if (!customAmount || customAmount <= 0) {
-          alert("Please enter a valid custom amount");
-          return;
-        }
-        amount = customAmount;
-        serviceName = "Other Service / Custom Payment";
-      } else {
-        amount = parseFloat(serviceSelect.value);
-      }
-
-      const transactionFee = 50; // Fixed fee
-      const totalAmount = amount + transactionFee;
-
-      const handler = PaystackPop.setup({
-        key: 'pk_live_fdb0c418d6e08f7e5b2ebe66d4d50b02020c9c93',
-        email: prompt("Enter your email address"),
-        amount: totalAmount * 100,
-        currency: 'NGN',
-        ref: 'BIGQUAMS_' + Math.floor(Math.random() * 1000000000 + 1),
-        metadata: {
-          custom_fields: [
-            { display_name: "Service", variable_name: "service", value: serviceName },
-            { display_name: "Transaction Fee", variable_name: "transaction_fee", value: transactionFee }
-          ]
-        },
-        callback: function(response) {
-          alert(`Payment successful!\nService: ${serviceName}\nTotal Paid: ₦${totalAmount}\nReference: ${response.reference}`);
-        },
-        onClose: function() {
-          alert('Payment cancelled');
-        }
-      });
-
-      handler.openIframe();
-    });
-  </script>
+document.getElementById('bookingForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  alert("Thank you, "+document.getElementById('name').value+". Your consultation request has been received. We'll contact you soon!");
+  this.reset();
+});
+</script>
 </body>
 </html>
