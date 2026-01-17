@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body style="text-align:center;padding:40px;">
+  <h1>✅ Payment Successful</h1>
+  <p>Your payment has been confirmed.</p>
+
+  <a id="whatsapp" style="display:inline-block;padding:12px;
+  background:#25D366;color:#fff;text-decoration:none;">
+    Send Receipt on WhatsApp
+  </a>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+document.getElementById("whatsapp").href = params.get("student");
+</script>
+</body>
+</html>
