@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Connections — BQM Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green:#00A651; --green-d:#007A3D; --green-l:#E6F7EE;
+    --orange:#FF6B00; --orange-l:#FFF1E6;
+    --navy:#0D1B2A; --navy-2:#1A2E44;
+    --ink:#111827; --muted:#6B7280; --border:#E5E7EB;
+    --surface:#F9FAFB; --white:#fff;
+    --r:14px; --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
+    --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;display:grid;grid-template-columns:260px 1fr;grid-template-rows:auto 1fr;}
+
+  /* SIDEBAR */
+  .sidebar{grid-row:1/-1;background:var(--navy);color:#fff;display:flex;flex-direction:column;padding:0 0 24px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .sidebar-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+  .brand-logo{width:40px;height:40px;background:var(--green);border-radius:10px;display:grid;place-items:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;font-size:14px;color:#fff;}
+  .brand-name{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px;line-height:1.2;}
+  .brand-name span{font-size:11px;font-weight:400;color:rgba(255,255,255,.5);display:block;}
+  .sidebar-section{padding:20px 16px 4px;}
+  .sidebar-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:0 8px 8px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;transition:all .18s;text-decoration:none;}
+  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+  .nav-item.active{background:var(--green);color:#fff;}
+  .nav-item .nav-icon{width:18px;text-align:center;font-size:16px;flex-shrink:0;}
+  .nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;}
+  .sidebar-footer{margin-top:auto;padding:16px 16px 0;border-top:1px solid rgba(255,255,255,.08);}
+
+  /* TOPBAR */
+  .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .topbar-left h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;}
+  .topbar-left p{font-size:13px;color:var(--muted);}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .btn-icon{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:grid;place-items:center;cursor:pointer;font-size:16px;position:relative;transition:background .15s;}
+  .btn-icon:hover{background:var(--surface);}
+  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--orange);border:2px solid #fff;}
+  .avatar-top{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+
+  /* MAIN */
+  .main{padding:28px 32px;overflow-y:auto;}
+
+  /* STATS BANNER */
+  .stats-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+  .stat-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;display:flex;align-items:center;gap:14px;}
+  .stat-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0;}
+  .stat-icon.green{background:var(--green-l);}
+  .stat-icon.orange{background:var(--orange-l);}
+  .stat-icon.blue{background:#EEF2FF;}
+  .stat-icon.purple{background:#F5F3FF;}
+  .stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;line-height:1;}
+  .stat-lbl{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;}
+
+  /* SEARCH + FILTER */
+  .search-filter{display:flex;gap:12px;margin-bottom:20px;align-items:center;}
+  .search-wrap{flex:1;position:relative;}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--muted);}
+  .search-input{width:100%;padding:11px 14px 11px 40px;border:1.5px solid var(--border);border-radius:11px;font-size:14px;font-family:inherit;color:var(--ink);background:var(--white);outline:none;transition:border-color .15s;}
+  .search-input:focus{border-color:var(--green);}
+  .filter-select{padding:11px 14px;border:1.5px solid var(--border);border-radius:11px;font-size:13.5px;font-family:inherit;color:var(--ink);background:var(--white);outline:none;cursor:pointer;}
+  .filter-select:focus{border-color:var(--green);}
+
+  /* TABS */
+  .conn-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;}
+  .conn-tab{padding:12px 20px;font-size:14px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .18s;display:flex;align-items:center;gap:7px;}
+  .conn-tab:hover{color:var(--ink);}
+  .conn-tab.active{color:var(--green);border-bottom-color:var(--green);}
+  .tab-ct{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--surface);color:var(--muted);}
+  .conn-tab.active .tab-ct{background:var(--green-l);color:var(--green-d);}
+
+  /* PANELS */
+  .conn-panel{display:none;}
+  .conn-panel.active{display:block;}
+
+  /* LAYOUT */
+  .conn-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start;}
+
+  /* PEOPLE GRID */
+  .people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+
+  /* PERSON CARD */
+  .person-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:transform .2s,box-shadow .2s;}
+  .person-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+  .person-cover{height:64px;position:relative;}
+  .person-av-wrap{position:absolute;bottom:-22px;left:16px;}
+  .person-av{width:48px;height:48px;border-radius:50%;border:3px solid #fff;display:grid;place-items:center;font-size:16px;font-weight:700;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;}
+  .online-dot{position:absolute;bottom:2px;right:2px;width:10px;height:10px;border-radius:50%;border:2px solid #fff;}
+  .online-dot.on{background:var(--green);}
+  .online-dot.off{background:#D1D5DB;}
+  .person-body{padding:30px 16px 16px;}
+  .person-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;margin-bottom:2px;}
+  .person-school{font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .person-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+  .ptag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+  .person-stats{display:flex;gap:12px;margin-bottom:12px;font-size:11px;color:var(--muted);}
+  .person-stats strong{color:var(--ink);font-weight:700;}
+  .person-actions{display:flex;gap:8px;}
+  .btn-connect{flex:1;padding:8px 0;border-radius:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .15s;text-align:center;}
+  .btn-connect.connect{background:var(--green);color:#fff;}
+  .btn-connect.connect:hover{background:var(--green-d);}
+  .btn-connect.follow{background:var(--navy);color:#fff;}
+  .btn-connect.follow:hover{background:var(--navy-2);}
+  .btn-connect.pending{background:var(--surface);color:var(--muted);border:1px solid var(--border);cursor:default;}
+  .btn-connect.connected{background:var(--green-l);color:var(--green-d);border:1px solid rgba(0,166,81,.2);}
+  .btn-connect.following{background:#EEF2FF;color:#4338CA;border:1px solid rgba(67,56,202,.2);}
+  .btn-msg{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--white);display:grid;place-items:center;cursor:pointer;font-size:15px;transition:all .15s;flex-shrink:0;}
+  .btn-msg:hover{background:var(--green-l);border-color:var(--green);}
+
+  /* MUTUAL BADGE */
+  .mutual-badge{font-size:10px;font-weight:600;color:var(--green-d);background:var(--green-l);padding:2px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;}
+
+  /* SECTION HEADER */
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .section-head h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;}
+  .section-head a{font-size:13px;color:var(--green);font-weight:600;cursor:pointer;text-decoration:none;}
+
+  /* PENDING REQUESTS LIST */
+  .req-list{display:flex;flex-direction:column;gap:12px;}
+  .req-row{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 18px;display:flex;align-items:center;gap:14px;}
+  .req-av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:700;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
+  .req-info-block{flex:1;}
+  .req-info-block h4{font-size:14px;font-weight:700;margin-bottom:2px;}
+  .req-info-block p{font-size:12px;color:var(--muted);}
+  .req-mutuals{font-size:11px;color:var(--green-d);margin-top:4px;}
+  .req-btns{display:flex;gap:8px;flex-shrink:0;}
+  .rbtn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .15s;}
+  .rbtn.accept{background:var(--green);color:#fff;}
+  .rbtn.accept:hover{background:var(--green-d);}
+  .rbtn.ignore{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+  .rbtn.ignore:hover{border-color:#EF4444;color:#EF4444;}
+
+  /* FOLLOWERS LIST */
+  .follow-row{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+  .follow-info{flex:1;}
+  .follow-info h4{font-size:14px;font-weight:700;}
+  .follow-info p{font-size:12px;color:var(--muted);}
+  .follow-btn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid var(--border);background:var(--white);transition:all .15s;}
+  .follow-btn:hover{border-color:var(--green);color:var(--green);}
+  .follow-btn.following{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .follow-btn.following:hover{background:var(--navy-2);}
+
+  /* SIDEBAR WIDGETS */
+  .conn-sidebar{display:flex;flex-direction:column;gap:16px;}
+  .widget{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
+  .widget-header{padding:14px 18px;border-bottom:1px solid var(--border);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:space-between;}
+  .widget-header a{font-size:12px;color:var(--green);font-weight:600;cursor:pointer;text-decoration:none;}
+  .widget-body{padding:12px 0;}
+  .suggest-item{display:flex;align-items:center;gap:12px;padding:10px 18px;cursor:pointer;transition:background .15s;}
+  .suggest-item:hover{background:var(--surface);}
+  .sug-av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
+  .sug-info{flex:1;}
+  .sug-info h4{font-size:13px;font-weight:700;}
+  .sug-info p{font-size:11px;color:var(--muted);}
+  .sug-btn{padding:5px 12px;border-radius:7px;background:var(--green-l);color:var(--green-d);font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .15s;}
+  .sug-btn:hover{background:var(--green);color:#fff;}
+
+  @media(max-width:1100px){.people-grid{grid-template-columns:repeat(2,1fr);}.conn-layout{grid-template-columns:1fr;}.conn-sidebar{display:none;}}
+  @media(max-width:768px){body{grid-template-columns:1fr;}.sidebar{display:none;}.main{padding:16px;}.topbar{padding:0 16px;}.people-grid{grid-template-columns:repeat(2,1fr);}.stats-banner{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">BQ</div>
+    <div class="brand-name">Big Quams Media <span>Student Portal</span></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <a href="#" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎯</span> CBT Practice <span class="nav-badge">New</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">📊</span> GPA Tracker</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Scholarships</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Community</div>
+    <a href="#" class="nav-item"><span class="nav-icon">💬</span> Chats <span class="nav-badge">5</span></a>
+    <a href="#" class="nav-item active"><span class="nav-icon">🔗</span> Connections</a>
+    <a href="#" class="nav-item"><span class="nav-icon">📰</span> News Feed</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎓</span> Campus Connect</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Resources</div>
+    <a href="#" class="nav-item"><span class="nav-icon">📚</span> eLibrary</a>
+    <a href="#" class="nav-item"><span class="nav-icon">💰</span> NELFUND Loans</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🧮</span> Calculators</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <a href="#" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="#" class="nav-item" style="color:#EF4444;"><span class="nav-icon">🚪</span> Log Out</a>
+  </div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <h1>Connections</h1>
+    <p>Follow students, connect with peers, build your network</p>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-icon">🔔<span class="notif-dot"></span></button>
+    <div class="avatar-top">AO</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- STATS -->
+  <div class="stats-banner">
+    <div class="stat-card">
+      <div class="stat-icon green">🔗</div>
+      <div><div class="stat-val">47</div><div class="stat-lbl">Connections</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">👥</div>
+      <div><div class="stat-val">128</div><div class="stat-lbl">Following</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">🌟</div>
+      <div><div class="stat-val">214</div><div class="stat-lbl">Followers</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon purple">📩</div>
+      <div><div class="stat-val">5</div><div class="stat-lbl">Pending Requests</div></div>
+    </div>
+  </div>
+
+  <!-- SEARCH + FILTER -->
+  <div class="search-filter">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Search students by name, school, or course..." />
+    </div>
+    <select class="filter-select">
+      <option>All Schools</option>
+      <option>My School (UNILAG)</option>
+      <option>Federal Universities</option>
+      <option>State Universities</option>
+      <option>Polytechnics</option>
+    </select>
+    <select class="filter-select">
+      <option>All Levels</option>
+      <option>100 Level</option>
+      <option>200 Level</option>
+      <option>300 Level</option>
+      <option>400 Level</option>
+    </select>
+  </div>
+
+  <!-- TABS -->
+  <div class="conn-tabs">
+    <button class="conn-tab active" onclick="switchConn('discover',this)">🔍 Discover <span class="tab-ct">200+</span></button>
+    <button class="conn-tab" onclick="switchConn('myschool',this)">🏫 My School <span class="tab-ct">84</span></button>
+    <button class="conn-tab" onclick="switchConn('connections',this)">🔗 My Connections <span class="tab-ct">47</span></button>
+    <button class="conn-tab" onclick="switchConn('requests',this)">📩 Requests <span class="tab-ct" style="background:var(--orange-l);color:var(--orange);">5</span></button>
+    <button class="conn-tab" onclick="switchConn('followers',this)">👥 Followers <span class="tab-ct">214</span></button>
+  </div>
+
+  <!-- DISCOVER -->
+  <div class="conn-panel active" id="conn-discover">
+    <div class="conn-layout">
+      <div>
+        <div class="section-head"><h3>People You May Know</h3><a>See all</a></div>
+        <div class="people-grid">
+
+          <div class="person-card">
+            <div class="person-cover" style="background:linear-gradient(135deg,#00A651,#007A3D);"></div>
+            <div class="person-av-wrap">
+              <div class="person-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK
+                <div class="online-dot on"></div>
+              </div>
+            </div>
+            <div class="person-body">
+              <div class="mutual-badge">👥 3 mutual connections</div>
+              <div class="person-name">Taiwo Kehinde</div>
+              <div class="person-school">OAU · Pharmacy · 300L</div>
+              <div class="person-tags">
+                <span class="ptag">JAMB Prep</span>
+                <span class="ptag">Chemistry</span>
+                <span class="ptag">Study Partner</span>
+              </div>
+              <div class="person-stats"><span><strong>142</strong> followers</span><span><strong>38</strong> connections</span></div>
+              <div class="person-actions">
+                <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+                <button class="btn-connect follow" onclick="toggleFollow(this)">+ Follow</button>
+                <button class="btn-msg">💬</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="person-card">
+            <div class="person-cover" style="background:linear-gradient(135deg,#FF6B00,#C2410C);"></div>
+            <div class="person-av-wrap">
+              <div class="person-av" style="background:linear-gradient(135deg,#FF6B00,#C2410C);">FA
+                <div class="online-dot on"></div>
+              </div>
+            </div>
+            <div class="person-body">
+              <div class="mutual-badge">👥 5 mutual connections</div>
+              <div class="person-name">Fatima Abubakar</div>
+              <div class="person-school">BUK · Economics · 200L</div>
+              <div class="person-tags">
+                <span class="ptag">NELFUND</span>
+                <span class="ptag">Economics</span>
+                <span class="ptag">Group Study</span>
+              </div>
+              <div class="person-stats"><span><strong>89</strong> followers</span><span><strong>21</strong> connections</span></div>
+              <div class="person-actions">
+                <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+                <button class="btn-connect following" onclick="toggleFollow(this)">✓ Following</button>
+                <button class="btn-msg">💬</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="person-card">
+            <div class="person-cover" style="background:linear-gradient(135deg,#4338CA,#6366F1);"></div>
+            <div class="person-av-wrap">
+              <div class="person-av" style="background:linear-gradient(135deg,#4338CA,#6366F1);">BO
+                <div class="online-dot off"></div>
+              </div>
+            </div>
+            <div class="person-body">
+              <div class="person-name">Bolu Ogundimu</div>
+              <div class="person-school">UNILAG · CS · 100L</div>
+              <div class="person-tags">
+                <span class="ptag">Coding</span>
+                <span class="ptag">Scholarships</span>
+                <span class="ptag">MTN 2025</span>
+              </div>
+              <div class="person-stats"><span><strong>204</strong> followers</span><span><strong>52</strong> connections</span></div>
+              <div class="person-actions">
+                <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+                <button class="btn-connect follow" onclick="toggleFollow(this)">+ Follow</button>
+                <button class="btn-msg">💬</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="person-card">
+            <div class="person-cover" style="background:linear-gradient(135deg,#059669,#047857);"></div>
+            <div class="person-av-wrap">
+              <div class="person-av" style="background:linear-gradient(135deg,#059669,#047857);">NN
+                <div class="online-dot on"></div>
+              </div>
+            </div>
+            <div class="person-body">
+              <div class="mutual-badge">👥 2 mutual connections</div>
+              <div class="person-name">Ngozi Nwachukwu</div>
+              <div class="person-school">UNIBEN · Biochemistry · 300L</div>
+              <div class="person-tags">
+                <span class="ptag">Biology</span>
+                <span class="ptag">Chemistry</span>
+                <span class="ptag">Morning Study</span>
+              </div>
+              <div class="person-stats"><span><strong>67</strong> followers</span><span><strong>19</strong> connections</span></div>
+              <div class="person-actions">
+                <button class="btn-connect pending" disabled>⏳ Pending</button>
+                <button class="btn-connect following" onclick="toggleFollow(this)">✓ Following</button>
+                <button class="btn-msg">💬</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="person-card">
+            <div class="person-cover" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"></div>
+            <div class="person-av-wrap">
+              <div class="person-av" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);">KA
+                <div class="online-dot off"></div>
+              </div>
+            </div>
+            <div class="person-body">
+              <div class="person-name">Khadijah Adeyemi</div>
+              <div class="person-school">UI · Medicine · 100L</div>
+              <div class="person-tags">
+                <span class="ptag">Post-UTME</span>
+                <span class="ptag">Biology</span>
+                <span class="ptag">Weekend Study</span>
+              </div>
+              <div class="person-stats"><span><strong>312</strong> followers</span><span><strong>74</strong> connections</span></div>
+              <div class="person-actions">
+                <button class="btn-connect connected" disabled>✓ Connected</button>
+                <button class="btn-connect following" onclick="toggleFollow(this)">✓ Following</button>
+                <button class="btn-msg">💬</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="person-card">
+            <div class="person-cover" style="background:linear-gradient(135deg,#DC2626,#B91C1C);"></div>
+            <div class="person-av-wrap">
+              <div class="person-av" style="background:linear-gradient(135deg,#DC2626,#B91C1C);">AY
+                <div class="online-dot on"></div>
+              </div>
+            </div>
+            <div class="person-body">
+              <div class="mutual-badge">👥 1 mutual connection</div>
+              <div class="person-name">Ayomide Yusuf</div>
+              <div class="person-school">UNILAG · CS · 200L</div>
+              <div class="person-tags">
+                <span class="ptag">Mathematics</span>
+                <span class="ptag">Physics</span>
+                <span class="ptag">Evening Study</span>
+              </div>
+              <div class="person-stats"><span><strong>178</strong> followers</span><span><strong>44</strong> connections</span></div>
+              <div class="person-actions">
+                <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+                <button class="btn-connect follow" onclick="toggleFollow(this)">+ Follow</button>
+                <button class="btn-msg">💬</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="conn-sidebar">
+        <div class="widget">
+          <div class="widget-header">⚡ Quick Suggestions <a>Refresh</a></div>
+          <div class="widget-body">
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#F59E0B,#D97706);">CS</div>
+              <div class="sug-info"><h4>Chidinma Samuel</h4><p>UNN · Medicine · 2 mutuals</p></div>
+              <button class="sug-btn">+ Follow</button>
+            </div>
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);">EM</div>
+              <div class="sug-info"><h4>Emeka Musa</h4><p>ABU · Engineering · 1 mutual</p></div>
+              <button class="sug-btn">+ Follow</button>
+            </div>
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#EC4899,#BE185D);">TA</div>
+              <div class="sug-info"><h4>Tunde Adeyinka</h4><p>OAU · Economics · 3 mutuals</p></div>
+              <button class="sug-btn">🔗 Connect</button>
+            </div>
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#14B8A6,#0F766E);">RI</div>
+              <div class="sug-info"><h4>Ruth Ikenna</h4><p>UNILAG · Law · 4 mutuals</p></div>
+              <button class="sug-btn">🔗 Connect</button>
+            </div>
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);">MO</div>
+              <div class="sug-info"><h4>Moses Okafor</h4><p>UI · Architecture · 1 mutual</p></div>
+              <button class="sug-btn">+ Follow</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-header">🏫 Students at UNILAG</div>
+          <div class="widget-body">
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#4338CA,#6366F1);">BO</div>
+              <div class="sug-info"><h4>Bolu Ogundimu</h4><p>CS · 100L · 204 followers</p></div>
+              <button class="sug-btn">🔗 Connect</button>
+            </div>
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#DC2626,#B91C1C);">AY</div>
+              <div class="sug-info"><h4>Ayomide Yusuf</h4><p>CS · 200L · 178 followers</p></div>
+              <button class="sug-btn">🔗 Connect</button>
+            </div>
+            <div class="suggest-item">
+              <div class="sug-av" style="background:linear-gradient(135deg,#14B8A6,#0F766E);">RI</div>
+              <div class="sug-info"><h4>Ruth Ikenna</h4><p>Law · 300L · 94 followers</p></div>
+              <button class="sug-btn">+ Follow</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="widget" style="background:linear-gradient(135deg,var(--navy),#0A2A1A);color:#fff;">
+          <div style="padding:20px 18px;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;margin-bottom:6px;">🌍 Grow your network</div>
+            <p style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:14px;">Connect with students across Nigeria to find study partners, share resources, and build lasting academic relationships.</p>
+            <button style="width:100%;padding:9px;border-radius:9px;background:var(--green);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Find More Students</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY SCHOOL -->
+  <div class="conn-panel" id="conn-myschool">
+    <div class="section-head"><h3>Students at University of Lagos</h3><a>Filter by department</a></div>
+    <div class="people-grid">
+      <div class="person-card">
+        <div class="person-cover" style="background:linear-gradient(135deg,#4338CA,#6366F1);"></div>
+        <div class="person-av-wrap"><div class="person-av" style="background:linear-gradient(135deg,#4338CA,#6366F1);">BO<div class="online-dot on"></div></div></div>
+        <div class="person-body">
+          <div class="person-name">Bolu Ogundimu</div>
+          <div class="person-school">UNILAG · Computer Science · 100L</div>
+          <div class="person-tags"><span class="ptag">Coding</span><span class="ptag">Scholarships</span></div>
+          <div class="person-stats"><span><strong>204</strong> followers</span><span><strong>52</strong> connections</span></div>
+          <div class="person-actions">
+            <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+            <button class="btn-connect follow" onclick="toggleFollow(this)">+ Follow</button>
+            <button class="btn-msg">💬</button>
+          </div>
+        </div>
+      </div>
+      <div class="person-card">
+        <div class="person-cover" style="background:linear-gradient(135deg,#DC2626,#B91C1C);"></div>
+        <div class="person-av-wrap"><div class="person-av" style="background:linear-gradient(135deg,#DC2626,#B91C1C);">AY<div class="online-dot on"></div></div></div>
+        <div class="person-body">
+          <div class="mutual-badge">👥 1 mutual connection</div>
+          <div class="person-name">Ayomide Yusuf</div>
+          <div class="person-school">UNILAG · Computer Science · 200L</div>
+          <div class="person-tags"><span class="ptag">Mathematics</span><span class="ptag">Physics</span></div>
+          <div class="person-stats"><span><strong>178</strong> followers</span><span><strong>44</strong> connections</span></div>
+          <div class="person-actions">
+            <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+            <button class="btn-connect follow" onclick="toggleFollow(this)">+ Follow</button>
+            <button class="btn-msg">💬</button>
+          </div>
+        </div>
+      </div>
+      <div class="person-card">
+        <div class="person-cover" style="background:linear-gradient(135deg,#14B8A6,#0F766E);"></div>
+        <div class="person-av-wrap"><div class="person-av" style="background:linear-gradient(135deg,#14B8A6,#0F766E);">RI<div class="online-dot off"></div></div></div>
+        <div class="person-body">
+          <div class="mutual-badge">👥 4 mutual connections</div>
+          <div class="person-name">Ruth Ikenna</div>
+          <div class="person-school">UNILAG · Law · 300L</div>
+          <div class="person-tags"><span class="ptag">Law</span><span class="ptag">Scholarships</span></div>
+          <div class="person-stats"><span><strong>94</strong> followers</span><span><strong>27</strong> connections</span></div>
+          <div class="person-actions">
+            <button class="btn-connect connect" onclick="toggleConnect(this,'connect')">🔗 Connect</button>
+            <button class="btn-connect follow" onclick="toggleFollow(this)">+ Follow</button>
+            <button class="btn-msg">💬</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY CONNECTIONS -->
+  <div class="conn-panel" id="conn-connections">
+    <div class="section-head"><h3>Your Connections (47)</h3><a>Manage</a></div>
+    <div class="people-grid">
+      <div class="person-card">
+        <div class="person-cover" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"></div>
+        <div class="person-av-wrap"><div class="person-av" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);">KA<div class="online-dot off"></div></div></div>
+        <div class="person-body">
+          <div class="person-name">Khadijah Adeyemi</div>
+          <div class="person-school">UI · Medicine · 100L</div>
+          <div class="person-tags"><span class="ptag">Post-UTME</span><span class="ptag">Biology</span></div>
+          <div class="person-stats"><span><strong>312</strong> followers</span><span><strong>74</strong> connections</span></div>
+          <div class="person-actions">
+            <button class="btn-connect connected" disabled>✓ Connected</button>
+            <button class="btn-msg">💬</button>
+          </div>
+        </div>
+      </div>
+      <div class="person-card">
+        <div class="person-cover" style="background:linear-gradient(135deg,#059669,#047857);"></div>
+        <div class="person-av-wrap"><div class="person-av" style="background:linear-gradient(135deg,#059669,#047857);">NN<div class="online-dot on"></div></div></div>
+        <div class="person-body">
+          <div class="person-name">Ngozi Nwachukwu</div>
+          <div class="person-school">UNIBEN · Biochemistry · 300L</div>
+          <div class="person-tags"><span class="ptag">Biology</span><span class="ptag">Chemistry</span></div>
+          <div class="person-stats"><span><strong>67</strong> followers</span><span><strong>19</strong> connections</span></div>
+          <div class="person-actions">
+            <button class="btn-connect connected" disabled>✓ Connected</button>
+            <button class="btn-msg">💬</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUESTS -->
+  <div class="conn-panel" id="conn-requests">
+    <div class="section-head"><h3>Connection Requests (5)</h3></div>
+    <div class="req-list">
+      <div class="req-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#F59E0B,#D97706);">CS</div>
+        <div class="req-info-block">
+          <h4>Chidinma Samuel</h4>
+          <p>UNN · Medicine · 100L</p>
+          <div class="req-mutuals">👥 2 mutual connections — Ngozi Nwachukwu, Taiwo Kehinde</div>
+        </div>
+        <div class="req-btns">
+          <button class="rbtn accept" onclick="acceptReq(this)">✓ Accept</button>
+          <button class="rbtn ignore">Ignore</button>
+        </div>
+      </div>
+      <div class="req-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);">EM</div>
+        <div class="req-info-block">
+          <h4>Emeka Musa</h4>
+          <p>ABU Zaria · Engineering · 200L</p>
+          <div class="req-mutuals">👥 1 mutual connection — Bolu Ogundimu</div>
+        </div>
+        <div class="req-btns">
+          <button class="rbtn accept" onclick="acceptReq(this)">✓ Accept</button>
+          <button class="rbtn ignore">Ignore</button>
+        </div>
+      </div>
+      <div class="req-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#EC4899,#BE185D);">TA</div>
+        <div class="req-info-block">
+          <h4>Tunde Adeyinka</h4>
+          <p>OAU · Economics · 300L</p>
+          <div class="req-mutuals">👥 3 mutual connections — Taiwo Kehinde, Khadijah Adeyemi +1</div>
+        </div>
+        <div class="req-btns">
+          <button class="rbtn accept" onclick="acceptReq(this)">✓ Accept</button>
+          <button class="rbtn ignore">Ignore</button>
+        </div>
+      </div>
+      <div class="req-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);">MO</div>
+        <div class="req-info-block">
+          <h4>Moses Okafor</h4>
+          <p>UI · Architecture · 100L</p>
+          <div class="req-mutuals">👥 1 mutual connection — Khadijah Adeyemi</div>
+        </div>
+        <div class="req-btns">
+          <button class="rbtn accept" onclick="acceptReq(this)">✓ Accept</button>
+          <button class="rbtn ignore">Ignore</button>
+        </div>
+      </div>
+      <div class="req-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#14B8A6,#0F766E);">RI</div>
+        <div class="req-info-block">
+          <h4>Ruth Ikenna</h4>
+          <p>UNILAG · Law · 300L</p>
+          <div class="req-mutuals">👥 4 mutual connections — Ayomide Yusuf, Bolu Ogundimu +2</div>
+        </div>
+        <div class="req-btns">
+          <button class="rbtn accept" onclick="acceptReq(this)">✓ Accept</button>
+          <button class="rbtn ignore">Ignore</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOLLOWERS -->
+  <div class="conn-panel" id="conn-followers">
+    <div class="section-head"><h3>People Following You (214)</h3></div>
+    <div class="req-list">
+      <div class="follow-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+        <div class="follow-info"><h4>Taiwo Kehinde</h4><p>OAU · Pharmacy · 300L · 142 followers</p></div>
+        <button class="follow-btn following" onclick="toggleFollowBtn(this)">✓ Following Back</button>
+      </div>
+      <div class="follow-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#FF6B00,#C2410C);">FA</div>
+        <div class="follow-info"><h4>Fatima Abubakar</h4><p>BUK · Economics · 200L · 89 followers</p></div>
+        <button class="follow-btn following" onclick="toggleFollowBtn(this)">✓ Following Back</button>
+      </div>
+      <div class="follow-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#F59E0B,#D97706);">CS</div>
+        <div class="follow-info"><h4>Chidinma Samuel</h4><p>UNN · Medicine · 100L · 34 followers</p></div>
+        <button class="follow-btn" onclick="toggleFollowBtn(this)">+ Follow Back</button>
+      </div>
+      <div class="follow-row">
+        <div class="req-av" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);">EM</div>
+        <div class="follow-info"><h4>Emeka Musa</h4><p>ABU · Engineering · 200L · 57 followers</p></div>
+        <button class="follow-btn" onclick="toggleFollowBtn(this)">+ Follow Back</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function switchConn(tab, btn) {
+    document.querySelectorAll('.conn-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.conn-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('conn-' + tab).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleConnect(btn, type) {
+    if (btn.classList.contains('connect')) {
+      btn.classList.remove('connect');
+      btn.classList.add('pending');
+      btn.textContent = '⏳ Pending';
+      btn.disabled = true;
+    }
+  }
+
+  function toggleFollow(btn) {
+    if (btn.classList.contains('follow')) {
+      btn.classList.remove('follow');
+      btn.classList.add('following');
+      btn.textContent = '✓ Following';
+    } else if (btn.classList.contains('following')) {
+      btn.classList.remove('following');
+      btn.classList.add('follow');
+      btn.textContent = '+ Follow';
+    }
+  }
+
+  function toggleFollowBtn(btn) {
+    if (btn.classList.contains('following')) {
+      btn.classList.remove('following');
+      btn.textContent = '+ Follow Back';
+    } else {
+      btn.classList.add('following');
+      btn.textContent = '✓ Following Back';
+    }
+  }
+
+  function acceptReq(btn) {
+    const row = btn.closest('.req-row');
+    row.style.transition = 'opacity .3s';
+    row.style.opacity = '0';
+    setTimeout(() => row.remove(), 300);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chats — BQM Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green:#00A651; --green-d:#007A3D; --green-l:#E6F7EE;
+    --orange:#FF6B00; --orange-l:#FFF1E6;
+    --navy:#0D1B2A; --navy-2:#1A2E44;
+    --ink:#111827; --muted:#6B7280; --border:#E5E7EB;
+    --surface:#F9FAFB; --white:#fff;
+    --r:14px; --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
+    --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;display:grid;grid-template-columns:260px 1fr;grid-template-rows:auto 1fr;}
+
+  /* SIDEBAR */
+  .sidebar{grid-row:1/-1;background:var(--navy);color:#fff;display:flex;flex-direction:column;padding:0 0 24px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .sidebar-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+  .brand-logo{width:40px;height:40px;background:var(--green);border-radius:10px;display:grid;place-items:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;font-size:14px;color:#fff;}
+  .brand-name{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px;line-height:1.2;}
+  .brand-name span{font-size:11px;font-weight:400;color:rgba(255,255,255,.5);display:block;}
+  .sidebar-section{padding:20px 16px 4px;}
+  .sidebar-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:0 8px 8px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;transition:all .18s;text-decoration:none;}
+  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+  .nav-item.active{background:var(--green);color:#fff;}
+  .nav-item .nav-icon{width:18px;text-align:center;font-size:16px;flex-shrink:0;}
+  .nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;}
+  .sidebar-footer{margin-top:auto;padding:16px 16px 0;border-top:1px solid rgba(255,255,255,.08);}
+
+  /* TOPBAR */
+  .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .topbar-left h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;}
+  .topbar-left p{font-size:13px;color:var(--muted);}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .btn-icon{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:grid;place-items:center;cursor:pointer;font-size:16px;position:relative;transition:background .15s;}
+  .btn-icon:hover{background:var(--surface);}
+  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--orange);border:2px solid #fff;}
+  .avatar-top{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+
+  /* CHAT LAYOUT */
+  .chat-page{height:calc(100vh - 68px);display:grid;grid-template-columns:320px 1fr;overflow:hidden;}
+
+  /* LEFT PANEL */
+  .chat-left{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+  .chat-left-header{padding:16px 18px;border-bottom:1px solid var(--border);}
+  .chat-left-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .chat-left-top h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;}
+  .chat-left-top-actions{display:flex;gap:6px;}
+  .icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--white);display:grid;place-items:center;cursor:pointer;font-size:14px;transition:background .15s;}
+  .icon-btn:hover{background:var(--surface);}
+  .chat-search{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;outline:none;color:var(--ink);transition:border-color .15s;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;}
+  .chat-search:focus{border-color:var(--green);}
+
+  /* TABS */
+  .chat-tabs{display:flex;border-bottom:1px solid var(--border);}
+  .chat-tab{flex:1;padding:10px 0;font-size:13px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px;}
+  .chat-tab:hover{color:var(--ink);}
+  .chat-tab.active{color:var(--green);border-bottom-color:var(--green);}
+  .tab-badge{background:var(--orange);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:999px;}
+
+  /* CONVERSATION LIST */
+  .conv-list{flex:1;overflow-y:auto;}
+  .conv-item{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(229,231,235,.5);position:relative;}
+  .conv-item:hover{background:var(--surface);}
+  .conv-item.active{background:var(--green-l);}
+  .conv-avatar{position:relative;flex-shrink:0;}
+  .av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:700;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
+  .av-group{border-radius:12px;}
+  .online-ring{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;border:2px solid #fff;}
+  .online-ring.on{background:var(--green);}
+  .online-ring.off{background:#D1D5DB;}
+  .conv-body{flex:1;min-width:0;}
+  .conv-name{font-size:14px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+  .conv-preview{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .conv-preview.unread{color:var(--ink);font-weight:600;}
+  .conv-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+  .conv-time{font-size:11px;color:var(--muted);}
+  .unread-count{background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;min-width:18px;text-align:center;}
+  .conv-muted{color:var(--muted);font-size:12px;}
+  .req-badge{font-size:10px;font-weight:700;background:var(--orange-l);color:var(--orange);padding:2px 7px;border-radius:999px;}
+
+  /* RIGHT PANEL */
+  .chat-right{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
+
+  /* Empty state */
+  .chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);text-align:center;padding:40px;}
+  .chat-empty .empty-icon{font-size:56px;margin-bottom:8px;}
+  .chat-empty h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;color:var(--ink);}
+  .chat-empty p{font-size:14px;max-width:300px;line-height:1.6;}
+
+  /* Active chat */
+  .chat-window{display:none;flex-direction:column;height:100%;}
+  .chat-window.open{display:flex;}
+
+  /* Chat header */
+  .chat-header{background:var(--white);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:14px;}
+  .chat-header-av{position:relative;}
+  .chat-header-info{flex:1;}
+  .chat-header-info h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;}
+  .chat-header-info p{font-size:12px;color:var(--muted);}
+  .chat-header-info p.online{color:var(--green);}
+  .chat-header-actions{display:flex;gap:8px;}
+
+  /* Messages */
+  .messages-area{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:4px;}
+  .date-divider{text-align:center;margin:12px 0;}
+  .date-divider span{font-size:11px;font-weight:600;color:var(--muted);background:var(--surface);padding:4px 12px;border-radius:999px;border:1px solid var(--border);}
+
+  .msg-row{display:flex;align-items:flex-end;gap:8px;margin-bottom:2px;}
+  .msg-row.mine{flex-direction:row-reverse;}
+  .msg-av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;}
+  .bubble{max-width:65%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.5;position:relative;}
+  .bubble.them{background:var(--white);border-radius:4px 16px 16px 16px;box-shadow:var(--shadow);}
+  .bubble.mine{background:var(--green);color:#fff;border-radius:16px 16px 4px 16px;}
+  .bubble.file{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+  .file-icon{font-size:24px;flex-shrink:0;}
+  .file-info{flex:1;}
+  .file-name{font-size:13px;font-weight:600;}
+  .file-size{font-size:11px;opacity:.7;}
+  .bubble-img{max-width:200px;border-radius:10px;display:block;}
+  .msg-meta{font-size:10px;margin-top:4px;display:flex;align-items:center;gap:4px;}
+  .msg-meta.them{color:var(--muted);}
+  .msg-meta.mine{color:rgba(255,255,255,.65);justify-content:flex-end;}
+  .read-tick{font-size:12px;}
+
+  /* Typing indicator */
+  .typing-row{display:flex;align-items:center;gap:8px;padding:4px 0 8px;}
+  .typing-bubble{background:var(--white);border-radius:16px;padding:10px 14px;box-shadow:var(--shadow);display:flex;gap:4px;align-items:center;}
+  .typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:typingBounce 1.2s ease-in-out infinite;}
+  .typing-dot:nth-child(2){animation-delay:.2s;}
+  .typing-dot:nth-child(3){animation-delay:.4s;}
+  @keyframes typingBounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+  .typing-label{font-size:11px;color:var(--muted);}
+
+  /* Input area */
+  .chat-input-area{background:var(--white);border-top:1px solid var(--border);padding:12px 16px;}
+  .chat-input-row{display:flex;align-items:flex-end;gap:10px;}
+  .attach-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all .15s;flex-shrink:0;}
+  .attach-btn:hover{background:var(--green-l);border-color:var(--green);}
+  .msg-input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;outline:none;resize:none;color:var(--ink);transition:border-color .15s;max-height:120px;min-height:40px;}
+  .msg-input:focus{border-color:var(--green);}
+  .send-btn{width:40px;height:40px;border-radius:50%;background:var(--green);border:none;color:#fff;font-size:16px;cursor:pointer;display:grid;place-items:center;transition:background .15s;flex-shrink:0;}
+  .send-btn:hover{background:var(--green-d);}
+  .attach-options{display:none;flex;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .attach-options.open{display:flex;}
+  .attach-opt{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 14px;border-radius:10px;transition:background .15s;}
+  .attach-opt:hover{background:var(--surface);}
+  .attach-opt span:first-child{font-size:22px;}
+  .attach-opt span:last-child{font-size:11px;color:var(--muted);font-weight:600;}
+
+  /* Message request panel */
+  .req-panel{flex:1;overflow-y:auto;padding:20px;}
+  .req-panel h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;}
+  .req-card{background:var(--white);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:center;}
+  .req-info{flex:1;}
+  .req-info h4{font-size:14px;font-weight:700;margin-bottom:2px;}
+  .req-info p{font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .req-preview{font-size:13px;color:var(--ink);font-style:italic;margin-bottom:10px;line-height:1.5;}
+  .req-actions{display:flex;gap:8px;}
+  .req-btn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .15s;}
+  .req-btn.accept{background:var(--green);color:#fff;}
+  .req-btn.accept:hover{background:var(--green-d);}
+  .req-btn.decline{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+  .req-btn.decline:hover{border-color:#EF4444;color:#EF4444;}
+
+  /* Panel system */
+  .panel{display:none;flex:1;flex-direction:column;overflow:hidden;}
+  .panel.active{display:flex;}
+
+  @media(max-width:768px){
+    body{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .topbar{padding:0 16px;}
+    .chat-page{grid-template-columns:1fr;}
+    .chat-left{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">BQ</div>
+    <div class="brand-name">Big Quams Media <span>Student Portal</span></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <a href="#" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎯</span> CBT Practice <span class="nav-badge">New</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">📊</span> GPA Tracker</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Scholarships</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Community</div>
+    <a href="#" class="nav-item active"><span class="nav-icon">💬</span> Chats <span class="nav-badge">5</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">🔗</span> Connections</a>
+    <a href="#" class="nav-item"><span class="nav-icon">📰</span> News Feed</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎓</span> Campus Connect</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Resources</div>
+    <a href="#" class="nav-item"><span class="nav-icon">📚</span> eLibrary</a>
+    <a href="#" class="nav-item"><span class="nav-icon">💰</span> NELFUND Loans</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🧮</span> Calculators</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <a href="#" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="#" class="nav-item" style="color:#EF4444;"><span class="nav-icon">🚪</span> Log Out</a>
+  </div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <h1>Chats</h1>
+    <p>5 unread messages</p>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-icon">🔔<span class="notif-dot"></span></button>
+    <div class="avatar-top">AO</div>
+  </div>
+</header>
+
+<div class="chat-page">
+
+  <!-- LEFT PANEL -->
+  <div class="chat-left">
+    <div class="chat-left-header">
+      <div class="chat-left-top">
+        <h2>Messages</h2>
+        <div class="chat-left-top-actions">
+          <button class="icon-btn" title="New group">👥</button>
+          <button class="icon-btn" title="New message" onclick="openChat('new')">✏️</button>
+        </div>
+      </div>
+      <input class="chat-search" type="text" placeholder="Search conversations..." />
+    </div>
+
+    <div class="chat-tabs">
+      <button class="chat-tab active" onclick="switchTab('all',this)">All</button>
+      <button class="chat-tab" onclick="switchTab('dms',this)">Direct</button>
+      <button class="chat-tab" onclick="switchTab('groups',this)">Groups</button>
+      <button class="chat-tab" onclick="switchTab('requests',this)">Requests <span class="tab-badge">3</span></button>
+    </div>
+
+    <div class="conv-list" id="conv-list">
+
+      <!-- DM 1 - unread -->
+      <div class="conv-item" onclick="openChat('taiwo')">
+        <div class="conv-avatar">
+          <div class="av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+          <div class="online-ring on"></div>
+        </div>
+        <div class="conv-body">
+          <div class="conv-name">Taiwo Kehinde <span style="font-size:10px;color:var(--muted);font-weight:500;">OAU</span></div>
+          <div class="conv-preview unread">Bro have you checked the JAMB result yet? 😭</div>
+        </div>
+        <div class="conv-right">
+          <span class="conv-time">2m</span>
+          <span class="unread-count">2</span>
+        </div>
+      </div>
+
+      <!-- Study Group -->
+      <div class="conv-item" onclick="openChat('group1')">
+        <div class="conv-avatar">
+          <div class="av av-group" style="background:linear-gradient(135deg,#4338CA,#6366F1);font-size:18px;">📚</div>
+        </div>
+        <div class="conv-body">
+          <div class="conv-name">JAMB 2025 Study Squad</div>
+          <div class="conv-preview unread">Fatima: I uploaded the Chemistry notes 🔥</div>
+        </div>
+        <div class="conv-right">
+          <span class="conv-time">14m</span>
+          <span class="unread-count">7</span>
+        </div>
+      </div>
+
+      <!-- DM 2 -->
+      <div class="conv-item" onclick="openChat('ngozi')">
+        <div class="conv-avatar">
+          <div class="av" style="background:linear-gradient(135deg,#FF6B00,#C2410C);">NN</div>
+          <div class="online-ring on"></div>
+        </div>
+        <div class="conv-body">
+          <div class="conv-name">Ngozi Nwachukwu <span style="font-size:10px;color:var(--muted);font-weight:500;">UNIBEN</span></div>
+          <div class="conv-preview">You: Thanks for the Biochem PDF! 🙏</div>
+        </div>
+        <div class="conv-right">
+          <span class="conv-time">1h</span>
+        </div>
+      </div>
+
+      <!-- Study Group 2 -->
+      <div class="conv-item" onclick="openChat('group2')">
+        <div class="conv-avatar">
+          <div class="av av-group" style="background:linear-gradient(135deg,#0D1B2A,#1A2E44);font-size:18px;">⚡</div>
+        </div>
+        <div class="conv-body">
+          <div class="conv-name">Physics 202 — UNILAG</div>
+          <div class="conv-preview unread">Bolu: Does anyone have Sadiku's textbook?</div>
+        </div>
+        <div class="conv-right">
+          <span class="conv-time">3h</span>
+          <span class="unread-count">4</span>
+        </div>
+      </div>
+
+      <!-- DM 3 -->
+      <div class="conv-item" onclick="openChat('ayomide')">
+        <div class="conv-avatar">
+          <div class="av" style="background:linear-gradient(135deg,#7C3AED,#6366F1);">AY</div>
+          <div class="online-ring off"></div>
+        </div>
+        <div class="conv-body">
+          <div class="conv-name">Ayomide Yusuf <span style="font-size:10px;color:var(--muted);font-weight:500;">UNILAG</span></div>
+          <div class="conv-preview">You: Let's meet in the library tomorrow</div>
+        </div>
+        <div class="conv-right">
+          <span class="conv-time">Yesterday</span>
+          <span class="conv-muted">🔇</span>
+        </div>
+      </div>
+
+      <!-- DM 4 -->
+      <div class="conv-item" onclick="openChat('khadijah')">
+        <div class="conv-avatar">
+          <div class="av" style="background:linear-gradient(135deg,#059669,#047857);">KA</div>
+          <div class="online-ring off"></div>
+        </div>
+        <div class="conv-body">
+          <div class="conv-name">Khadijah Adeyemi <span style="font-size:10px;color:var(--muted);font-weight:500;">UI</span></div>
+          <div class="conv-preview">Seen ✓✓ · How's your Post-UTME prep?</div>
+        </div>
+        <div class="conv-right">
+          <span class="conv-time">Mon</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="chat-right">
+
+    <!-- EMPTY STATE -->
+    <div class="panel active" id="panel-empty">
+      <div class="chat-empty">
+        <div class="empty-icon">💬</div>
+        <h3>Your messages</h3>
+        <p>Select a conversation to start chatting, or send a message to a connection.</p>
+        <button style="margin-top:8px;padding:10px 22px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;" onclick="openChat('taiwo')">Open a conversation</button>
+      </div>
+    </div>
+
+    <!-- CHAT: TAIWO -->
+    <div class="panel" id="panel-taiwo">
+      <div class="chat-window open">
+        <div class="chat-header">
+          <div class="chat-header-av">
+            <div class="av" style="background:linear-gradient(135deg,#00A651,#007A3D);width:40px;height:40px;font-size:14px;">TK</div>
+            <div class="online-ring on" style="bottom:0;right:0;"></div>
+          </div>
+          <div class="chat-header-info">
+            <h3>Taiwo Kehinde</h3>
+            <p class="online">● Online now · OAU · Pharmacy 300L</p>
+          </div>
+          <div class="chat-header-actions">
+            <button class="icon-btn">📞</button>
+            <button class="icon-btn">📹</button>
+            <button class="icon-btn">⋯</button>
+          </div>
+        </div>
+
+        <div class="messages-area">
+          <div class="date-divider"><span>Today</span></div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+            <div>
+              <div class="bubble them">Guy, have you submitted your NELFUND application yet?</div>
+              <div class="msg-meta them">10:21 AM</div>
+            </div>
+          </div>
+
+          <div class="msg-row mine">
+            <div>
+              <div class="bubble mine">Yes! Submitted it last week. They approved it but the money hasn't dropped yet 😩</div>
+              <div class="msg-meta mine">10:24 AM <span class="read-tick">✓✓</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+            <div>
+              <div class="bubble them">Lol same issue for me. I heard OAU isn't even in the first batch yet 😭</div>
+              <div class="msg-meta them">10:25 AM</div>
+            </div>
+          </div>
+
+          <div class="msg-row mine">
+            <div>
+              <div class="bubble mine file">
+                <span class="file-icon">📄</span>
+                <div class="file-info">
+                  <div class="file-name">NELFUND_Guide_BQM.pdf</div>
+                  <div class="file-size">2.1 MB · PDF</div>
+                </div>
+                <span style="font-size:18px;cursor:pointer;">⬇</span>
+              </div>
+              <div class="msg-meta mine">10:26 AM <span class="read-tick">✓✓</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+            <div>
+              <div class="bubble them">Omg this is exactly what I needed! Let me check it 🙏🙏</div>
+              <div class="msg-meta them">10:28 AM</div>
+            </div>
+          </div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+            <div>
+              <div class="bubble them">Bro have you checked the JAMB result yet? 😭</div>
+              <div class="msg-meta them">Just now</div>
+            </div>
+          </div>
+
+          <div class="typing-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+            <div class="typing-bubble">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
+            <span class="typing-label">Taiwo is typing...</span>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="attach-options" id="attach-opts">
+            <div class="attach-opt"><span>📷</span><span>Photo</span></div>
+            <div class="attach-opt"><span>📄</span><span>Document</span></div>
+            <div class="attach-opt"><span>🎵</span><span>Audio</span></div>
+            <div class="attach-opt"><span>📍</span><span>Location</span></div>
+          </div>
+          <div class="chat-input-row">
+            <button class="attach-btn" onclick="toggleAttach()" title="Attach file">📎</button>
+            <textarea class="msg-input" placeholder="Type a message..." rows="1" onkeydown="sendOnEnter(event)"></textarea>
+            <button class="icon-btn" style="flex-shrink:0;" title="Emoji">😊</button>
+            <button class="send-btn" title="Send">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT: GROUP 1 -->
+    <div class="panel" id="panel-group1">
+      <div class="chat-window open">
+        <div class="chat-header">
+          <div class="av av-group" style="background:linear-gradient(135deg,#4338CA,#6366F1);width:40px;height:40px;font-size:18px;border-radius:10px;">📚</div>
+          <div class="chat-header-info">
+            <h3>JAMB 2025 Study Squad</h3>
+            <p>12 members · 5 online now</p>
+          </div>
+          <div class="chat-header-actions">
+            <button class="icon-btn">👥</button>
+            <button class="icon-btn">⋯</button>
+          </div>
+        </div>
+
+        <div class="messages-area">
+          <div class="date-divider"><span>Today</span></div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#FF6B00,#C2410C);">FA</div>
+            <div>
+              <div class="bubble them"><strong style="font-size:12px;display:block;margin-bottom:3px;color:var(--orange);">Fatima Abubakar</strong>Good morning everyone! Today's focus: Chemistry organic compounds 🔥</div>
+              <div class="msg-meta them">8:02 AM</div>
+            </div>
+          </div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#4338CA,#6366F1);">BO</div>
+            <div>
+              <div class="bubble them"><strong style="font-size:12px;display:block;margin-bottom:3px;color:#6366F1;">Bolu Ogundimu</strong>Let's go! I struggled with ester formation in past questions 😅</div>
+              <div class="msg-meta them">8:05 AM</div>
+            </div>
+          </div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#FF6B00,#C2410C);">FA</div>
+            <div>
+              <div class="bubble them file">
+                <span class="file-icon">📄</span>
+                <div class="file-info">
+                  <div class="file-name" style="color:var(--ink);">Chemistry_Organic_Notes.pdf</div>
+                  <div class="file-size">4.7 MB · PDF</div>
+                </div>
+                <span style="font-size:18px;cursor:pointer;color:var(--green);">⬇</span>
+              </div>
+              <div class="msg-meta them">8:09 AM</div>
+            </div>
+          </div>
+
+          <div class="msg-row mine">
+            <div>
+              <div class="bubble mine">This is exactly what we needed 🙌 I uploaded the JAMB past questions too</div>
+              <div class="msg-meta mine">8:14 AM <span class="read-tick">✓✓</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row">
+            <div class="av msg-av" style="background:linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+            <div>
+              <div class="bubble them"><strong style="font-size:12px;display:block;margin-bottom:3px;color:var(--green);">Taiwo Kehinde</strong>I uploaded the Chemistry notes 🔥</div>
+              <div class="msg-meta them">14 min ago</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="chat-input-row">
+            <button class="attach-btn" title="Attach file">📎</button>
+            <textarea class="msg-input" placeholder="Message JAMB 2025 Study Squad..." rows="1"></textarea>
+            <button class="icon-btn" style="flex-shrink:0;">😊</button>
+            <button class="send-btn">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGE REQUESTS -->
+    <div class="panel" id="panel-requests">
+      <div class="req-panel">
+        <h3>💌 Message Requests (3)</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5;">These people aren't your connections yet. Accept to start chatting, or decline to remove the request.</p>
+
+        <div class="req-card">
+          <div class="av" style="background:linear-gradient(135deg,#7C3AED,#6366F1);width:48px;height:48px;font-size:16px;flex-shrink:0;">CS</div>
+          <div class="req-info">
+            <h4>Chidinma Samuel</h4>
+            <p>100L · Medicine · University of Nigeria, Nsukka</p>
+            <div class="req-preview">"Hi! I saw your post on Campus Connect about JAMB prep. I'm also retaking and would love to study together 🙏"</div>
+            <div class="req-actions">
+              <button class="req-btn accept">✓ Accept</button>
+              <button class="req-btn decline">✕ Decline</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="av" style="background:linear-gradient(135deg,#059669,#047857);width:48px;height:48px;font-size:16px;flex-shrink:0;">EM</div>
+          <div class="req-info">
+            <h4>Emeka Musa</h4>
+            <p>200L · Engineering · ABU Zaria</p>
+            <div class="req-preview">"Hey, found your profile through BQM Connections. I'm looking for a study partner for Physics and Maths. Are you interested?"</div>
+            <div class="req-actions">
+              <button class="req-btn accept">✓ Accept</button>
+              <button class="req-btn decline">✕ Decline</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="av" style="background:linear-gradient(135deg,#DC2626,#B91C1C);width:48px;height:48px;font-size:16px;flex-shrink:0;">TA</div>
+          <div class="req-info">
+            <h4>Tunde Adeyinka</h4>
+            <p>300L · Economics · OAU</p>
+            <div class="req-preview">"Your NELFUND post was super helpful! Do you know if the portal is still open for OAU students?"</div>
+            <div class="req-actions">
+              <button class="req-btn accept">✓ Accept</button>
+              <button class="req-btn decline">✕ Decline</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const panels = ['empty','taiwo','group1','group2','ngozi','ayomide','khadijah','requests'];
+
+  function openChat(id) {
+    panels.forEach(p => {
+      const el = document.getElementById('panel-' + p);
+      if (el) el.classList.remove('active');
+    });
+    const target = document.getElementById('panel-' + id);
+    if (target) {
+      target.classList.add('active');
+    } else {
+      document.getElementById('panel-taiwo').classList.add('active');
+    }
+    document.querySelectorAll('.conv-item').forEach(c => c.classList.remove('active'));
+    event && event.currentTarget && event.currentTarget.classList && event.currentTarget.classList.add('active');
+  }
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.chat-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const items = document.querySelectorAll('.conv-item');
+    if (tab === 'requests') {
+      openChat('requests');
+      return;
+    }
+    if (tab === 'groups') {
+      items.forEach(item => {
+        const name = item.querySelector('.conv-name').textContent;
+        item.style.display = name.includes('Squad') || name.includes('Physics') ? '' : 'none';
+      });
+    } else if (tab === 'dms') {
+      items.forEach(item => {
+        const name = item.querySelector('.conv-name').textContent;
+        item.style.display = !name.includes('Squad') && !name.includes('Physics') ? '' : 'none';
+      });
+    } else {
+      items.forEach(item => item.style.display = '');
+    }
+  }
+
+  function toggleAttach() {
+    document.getElementById('attach-opts').classList.toggle('open');
+  }
+
+  function sendOnEnter(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+    }
+  }
+</script>
+</body>
+</html>

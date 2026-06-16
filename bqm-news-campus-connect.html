@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>News & Campus Connect — BQM Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bqm-green:   #00A651;
+    --bqm-green-d: #007A3D;
+    --bqm-green-l: #E6F7EE;
+    --bqm-orange:  #FF6B00;
+    --bqm-orange-l:#FFF1E6;
+    --bqm-navy:    #0D1B2A;
+    --bqm-navy-2:  #1A2E44;
+    --ink:         #111827;
+    --muted:       #6B7280;
+    --border:      #E5E7EB;
+    --surface:     #F9FAFB;
+    --white:       #FFFFFF;
+    --r-card: 16px;
+    --r-pill: 999px;
+    --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,.10);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    grid-row: 1 / -1;
+    background: var(--bqm-navy); color: var(--white);
+    display: flex; flex-direction: column;
+    padding: 0 0 24px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar-brand {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand-logo {
+    width: 40px; height: 40px; background: var(--bqm-green);
+    border-radius: 10px; display: grid; place-items: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
+  }
+  .brand-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; line-height: 1.2; }
+  .brand-name span { font-size: 11px; font-weight: 400; color: rgba(255,255,255,.5); display: block; }
+  .sidebar-section { padding: 20px 16px 4px; }
+  .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,.35); padding: 0 8px 8px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; color: rgba(255,255,255,.65);
+    cursor: pointer; transition: all .18s; text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .nav-item.active { background: var(--bqm-green); color: #fff; }
+  .nav-item .nav-icon { width: 18px; text-align: center; font-size: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--bqm-orange); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: var(--r-pill); }
+  .sidebar-footer { margin-top: auto; padding: 16px 16px 0; border-top: 1px solid rgba(255,255,255,.08); }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-left h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; }
+  .topbar-left p { font-size: 13px; color: var(--muted); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .btn-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--white);
+    display: grid; place-items: center;
+    cursor: pointer; font-size: 16px; position: relative; transition: background .15s;
+  }
+  .btn-icon:hover { background: var(--surface); }
+  .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--bqm-orange); border: 2px solid #fff; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--bqm-green), var(--bqm-green-d));
+    color: #fff; font-weight: 700; font-size: 14px;
+    display: grid; place-items: center; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── MAIN ── */
+  .main { padding: 28px 32px; overflow-y: auto; }
+
+  /* ── PAGE SWITCHER ── */
+  .page-switcher {
+    display: flex; gap: 8px; margin-bottom: 24px;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 5px; width: fit-content;
+  }
+  .switch-btn {
+    padding: 9px 22px; border-radius: 9px; border: none;
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: all .2s; color: var(--muted); background: transparent;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .switch-btn.active { background: var(--bqm-navy); color: #fff; box-shadow: var(--shadow); }
+
+  /* ── TICKER ── */
+  .ticker {
+    background: var(--bqm-navy); color: #fff;
+    border-radius: 10px; padding: 10px 18px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 22px; overflow: hidden;
+  }
+  .ticker-label {
+    background: var(--bqm-green); color: #fff;
+    font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: var(--r-pill); flex-shrink: 0;
+  }
+  .ticker-track { overflow: hidden; flex: 1; }
+  .ticker-inner {
+    display: flex; gap: 48px; white-space: nowrap;
+    animation: ticker 28s linear infinite;
+    font-size: 13px; color: rgba(255,255,255,.8);
+  }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── NEWS PAGE ── */
+  #page-news { display: block; }
+  #page-connect { display: none; }
+
+  .news-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-chip {
+    padding: 6px 16px; border-radius: var(--r-pill);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--white);
+    color: var(--muted); transition: all .15s; font-family: inherit;
+  }
+  .filter-chip:hover { border-color: var(--bqm-green); color: var(--bqm-green); }
+  .filter-chip.active { background: var(--bqm-green); border-color: var(--bqm-green); color: #fff; }
+
+  /* Featured article */
+  .featured-article {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); overflow: hidden; margin-bottom: 16px;
+    cursor: pointer; transition: box-shadow .2s;
+  }
+  .featured-article:hover { box-shadow: var(--shadow-lg); }
+  .featured-img {
+    height: 200px;
+    background: linear-gradient(135deg, var(--bqm-navy) 0%, #0F3D2A 100%);
+    display: flex; align-items: flex-end; padding: 20px;
+    position: relative; overflow: hidden;
+  }
+  .featured-img::before {
+    content: '📰'; font-size: 80px; position: absolute;
+    right: 24px; top: 50%; transform: translateY(-50%);
+    opacity: .15;
+  }
+  .featured-img-overlay { position: relative; z-index: 1; }
+  .featured-img-overlay .cat { display: inline-block; }
+  .article-body { padding: 20px 22px; }
+  .article-body h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; line-height: 1.35; margin-bottom: 8px; }
+  .article-body p { font-size: 13.5px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+  .article-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); }
+  .article-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+  /* News list */
+  .news-list { display: flex; flex-direction: column; gap: 12px; }
+  .news-card {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 16px 20px;
+    display: flex; gap: 16px; cursor: pointer; transition: box-shadow .2s;
+    text-decoration: none; color: inherit;
+  }
+  .news-card:hover { box-shadow: var(--shadow-lg); }
+  .news-card-icon {
+    width: 48px; height: 48px; border-radius: 10px;
+    display: grid; place-items: center; font-size: 22px; flex-shrink: 0;
+  }
+  .news-card-body { flex: 1; }
+  .news-card-body h3 { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 5px; }
+  .news-card-body p { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+  .news-card-footer { display: flex; align-items: center; gap: 10px; }
+
+  /* Category tags */
+  .cat {
+    font-size: 10px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: var(--r-pill);
+  }
+  .cat.jamb    { background: var(--bqm-green-l); color: var(--bqm-green-d); }
+  .cat.nelfund { background: var(--bqm-orange-l); color: #C2410C; }
+  .cat.schol   { background: #EEF2FF; color: #4338CA; }
+  .cat.campus  { background: #F0FDF4; color: #166534; }
+  .cat.uni     { background: #FDF4FF; color: #7E22CE; }
+  .cat.waec    { background: #FFF7ED; color: #C2410C; }
+
+  .time-label { font-size: 11px; color: var(--muted); }
+
+  /* Sidebar widgets */
+  .widget { background: var(--white); border-radius: var(--r-card); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 16px; }
+  .widget-header { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .widget-body { padding: 14px 18px; }
+
+  .trending-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .trending-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: var(--border); line-height: 1; flex-shrink: 0; width: 24px; }
+  .trending-text { font-size: 13px; font-weight: 600; line-height: 1.4; cursor: pointer; }
+  .trending-text:hover { color: var(--bqm-green); }
+  .trending-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .uni-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .uni-item:last-child { border-bottom: none; }
+  .uni-avatar { width: 32px; height: 32px; border-radius: 8px; background: var(--bqm-navy); color: #fff; font-size: 10px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+  .uni-info h4 { font-size: 13px; font-weight: 600; }
+  .uni-info p { font-size: 11px; color: var(--muted); }
+  .uni-dot { width: 6px; height: 6px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+  .uni-dot.active { background: var(--bqm-green); }
+  .uni-dot.quiet  { background: var(--border); }
+
+  /* ── CAMPUS CONNECT ── */
+  .connect-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+
+  /* Section tabs inside Campus Connect */
+  .connect-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .connect-tab {
+    padding: 12px 18px; font-size: 13.5px; font-weight: 600;
+    color: var(--muted); border: none; background: none; cursor: pointer;
+    font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: all .18s; display: flex; align-items: center; gap: 6px;
+  }
+  .connect-tab:hover { color: var(--ink); }
+  .connect-tab.active { color: var(--bqm-green); border-bottom-color: var(--bqm-green); }
+  .connect-panel { display: none; }
+  .connect-panel.active { display: block; }
+
+  /* Compose box */
+  .compose-box {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 16px 20px; margin-bottom: 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .compose-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--bqm-green), var(--bqm-orange));
+    color: #fff; font-weight: 800; font-size: 14px;
+    display: grid; place-items: center; flex-shrink: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .compose-input {
+    flex: 1; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; font-size: 14px; font-family: inherit;
+    resize: none; outline: none; transition: border-color .15s; min-height: 44px;
+    color: var(--ink);
+  }
+  .compose-input:focus { border-color: var(--bqm-green); }
+  .compose-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+  .btn-sm {
+    padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    font-family: inherit; cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-sm.primary { background: var(--bqm-green); color: #fff; }
+  .btn-sm.primary:hover { background: var(--bqm-green-d); }
+  .btn-sm.ghost { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+
+  /* Forum post */
+  .forum-post {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .post-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 13px; font-weight: 700;
+    color: #fff; flex-shrink: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .post-meta h4 { font-size: 14px; font-weight: 700; }
+  .post-meta p { font-size: 12px; color: var(--muted); }
+  .post-tag { margin-left: auto; }
+  .post-body { font-size: 14px; line-height: 1.65; color: var(--ink); margin-bottom: 14px; }
+  .post-actions { display: flex; gap: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .post-action {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    cursor: pointer; background: none; border: none; font-family: inherit;
+    transition: color .15s; padding: 0;
+  }
+  .post-action:hover { color: var(--bqm-green); }
+  .post-action.liked { color: var(--bqm-orange); }
+
+  /* Study partner card */
+  .partner-card {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 18px 20px;
+    margin-bottom: 12px; display: flex; gap: 16px; align-items: center;
+  }
+  .partner-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 18px; font-weight: 800;
+    color: #fff; flex-shrink: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .partner-info { flex: 1; }
+  .partner-info h3 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .partner-info p { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .partner-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .partner-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: var(--r-pill); background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+  .partner-btn {
+    background: var(--bqm-green-l); color: var(--bqm-green-d);
+    border: none; border-radius: 9px; padding: 9px 16px;
+    font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+    flex-shrink: 0; transition: all .15s;
+  }
+  .partner-btn:hover { background: var(--bqm-green); color: #fff; }
+
+  /* Course review */
+  .review-card {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 12px;
+  }
+  .review-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .review-course { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 800; }
+  .review-school { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stars { color: #F59E0B; font-size: 14px; letter-spacing: 1px; }
+  .review-body { font-size: 13.5px; color: var(--ink); line-height: 1.6; margin-bottom: 12px; }
+  .review-footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .review-helpful { display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; }
+  .review-helpful:hover { color: var(--bqm-green); }
+
+  /* Events */
+  .event-card {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 16px 20px;
+    margin-bottom: 12px; display: flex; gap: 16px; align-items: flex-start;
+  }
+  .event-date {
+    background: var(--bqm-navy); color: #fff; border-radius: 10px;
+    padding: 10px 14px; text-align: center; flex-shrink: 0;
+    min-width: 56px;
+  }
+  .event-date .month { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--bqm-green); }
+  .event-date .day { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; line-height: 1; }
+  .event-info { flex: 1; }
+  .event-info h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .event-info p { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+  .event-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .event-chip { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: var(--r-pill); }
+  .event-chip.online { background: var(--bqm-green-l); color: var(--bqm-green-d); }
+  .event-chip.physical { background: var(--bqm-orange-l); color: #C2410C; }
+  .event-chip.free { background: #EEF2FF; color: #4338CA; }
+  .event-rsvp {
+    background: var(--bqm-navy); color: #fff; border: none; border-radius: 9px;
+    padding: 8px 14px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; flex-shrink: 0; align-self: center;
+    transition: background .15s;
+  }
+  .event-rsvp:hover { background: var(--bqm-green); }
+
+  /* Anon confession */
+  .confession-card {
+    background: var(--white); border-radius: var(--r-card);
+    box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 12px;
+    border-left: 4px solid var(--bqm-orange);
+  }
+  .confession-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .anon-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--bqm-orange-l); display: grid; place-items: center; font-size: 16px;
+  }
+  .anon-label { font-size: 13px; font-weight: 700; color: var(--bqm-orange); }
+  .anon-school { font-size: 12px; color: var(--muted); }
+  .confession-text { font-size: 14px; line-height: 1.65; color: var(--ink); margin-bottom: 14px; }
+
+  /* Right sidebar */
+  .connect-sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .stats-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-mini-card {
+    background: var(--white); border-radius: 12px; box-shadow: var(--shadow);
+    padding: 14px; text-align: center;
+  }
+  .stat-mini-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; color: var(--bqm-green); }
+  .stat-mini-label { font-size: 11px; color: var(--muted); margin-top: 3px; font-weight: 500; }
+
+  .online-list { display: flex; flex-direction: column; gap: 10px; }
+  .online-user { display: flex; align-items: center; gap: 10px; }
+  .online-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    color: #fff; flex-shrink: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+    position: relative;
+  }
+  .online-dot { position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; border: 2px solid #fff; background: var(--bqm-green); }
+  .online-info h4 { font-size: 13px; font-weight: 600; }
+  .online-info p { font-size: 11px; color: var(--muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .news-layout { grid-template-columns: 1fr; }
+    .connect-layout { grid-template-columns: 1fr; }
+    .news-sidebar { display: none; }
+    .connect-sidebar { display: none; }
+  }
+  @media (max-width: 768px) {
+    body { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 16px; }
+    .topbar { padding: 0 16px; }
+    .page-switcher { width: 100%; }
+    .switch-btn { flex: 1; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">BQ</div>
+    <div class="brand-name">Big Quams Media <span>Student Portal</span></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <a href="#" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎯</span> CBT Practice <span class="nav-badge">New</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">📊</span> GPA Tracker</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Scholarships</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Resources</div>
+    <a href="#" class="nav-item"><span class="nav-icon">📚</span> eLibrary</a>
+    <a href="#" class="nav-item"><span class="nav-icon">💰</span> NELFUND Loans</a>
+    <a href="#" class="nav-item active"><span class="nav-icon">📰</span> News & Connect <span class="nav-badge">5</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">🧮</span> Calculators</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <a href="#" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+    <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="#" class="nav-item" style="color:#EF4444;"><span class="nav-icon">🚪</span> Log Out</a>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <h1>News & Campus Connect</h1>
+    <p>Stay informed. Stay connected.</p>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-icon">🔔<span class="notif-dot"></span></button>
+    <button class="btn-icon">🔍</button>
+    <div class="avatar">AO</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- PAGE SWITCHER -->
+  <div class="page-switcher">
+    <button class="switch-btn active" onclick="switchPage('news', this)">📰 News Feed</button>
+    <button class="switch-btn" onclick="switchPage('connect', this)">🎓 Campus Connect</button>
+  </div>
+
+  <!-- BREAKING TICKER -->
+  <div class="ticker">
+    <span class="ticker-label">Breaking</span>
+    <div class="ticker-track">
+      <div class="ticker-inner">
+        <span>📋 JAMB releases 2025 UTME results — check via portal</span>
+        <span>💰 NELFUND extends disbursement to 28 more institutions</span>
+        <span>🏆 MTN Foundation Scholarship 2025 portal now open</span>
+        <span>🏛️ UNILAG releases Post-UTME screening schedule for 2025</span>
+        <span>📋 JAMB releases 2025 UTME results — check via portal</span>
+        <span>💰 NELFUND extends disbursement to 28 more institutions</span>
+        <span>🏆 MTN Foundation Scholarship 2025 portal now open</span>
+        <span>🏛️ UNILAG releases Post-UTME screening schedule for 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NEWS PAGE ═══ -->
+  <div id="page-news">
+    <div class="news-layout">
+
+      <!-- LEFT: ARTICLES -->
+      <div>
+        <!-- Filters -->
+        <div class="filter-bar">
+          <button class="filter-chip active" onclick="setFilter(this)">All</button>
+          <button class="filter-chip" onclick="setFilter(this)">JAMB</button>
+          <button class="filter-chip" onclick="setFilter(this)">NELFUND</button>
+          <button class="filter-chip" onclick="setFilter(this)">Scholarships</button>
+          <button class="filter-chip" onclick="setFilter(this)">Campus</button>
+          <button class="filter-chip" onclick="setFilter(this)">Universities</button>
+          <button class="filter-chip" onclick="setFilter(this)">WAEC/NECO</button>
+        </div>
+
+        <!-- Featured -->
+        <div class="featured-article">
+          <div class="featured-img">
+            <div class="featured-img-overlay">
+              <span class="cat jamb">JAMB</span>
+            </div>
+          </div>
+          <div class="article-body">
+            <h2>JAMB releases 2025 UTME results — over 1.9 million candidates can now access scores</h2>
+            <p>The Joint Admissions and Matriculation Board has officially released results for the 2025 Unified Tertiary Matriculation Examination. All candidates can check their scores via the JAMB student portal or by sending an SMS to the official short code.</p>
+            <div class="article-meta">
+              <span>BQM Newsroom</span>
+              <span class="article-meta-dot"></span>
+              <span>2 hours ago</span>
+              <span class="article-meta-dot"></span>
+              <span>3 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- News list -->
+        <div class="news-list">
+          <div class="news-card">
+            <div class="news-card-icon" style="background: var(--bqm-orange-l);">💰</div>
+            <div class="news-card-body">
+              <h3>NELFUND disbursement extended to 28 more federal institutions</h3>
+              <p>Students at newly-added polytechnics and universities can now apply for the student loan scheme through the NELFUND portal.</p>
+              <div class="news-card-footer">
+                <span class="cat nelfund">NELFUND</span>
+                <span class="time-label">Yesterday</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-card-icon" style="background: #EEF2FF;">🏆</div>
+            <div class="news-card-body">
+              <h3>MTN Foundation 2025 Scholarship — portal is open, deadline August 1</h3>
+              <p>The MTN Foundation Science & Technology Scholarship is now accepting applications. Eligible students must be in 200L–400L studying STEM courses with minimum 3.5 CGPA.</p>
+              <div class="news-card-footer">
+                <span class="cat schol">Scholarship</span>
+                <span class="time-label">2 days ago</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-card-icon" style="background: #FDF4FF;">🏛️</div>
+            <div class="news-card-body">
+              <h3>UNILAG releases Post-UTME screening schedule — August 10–14</h3>
+              <p>The University of Lagos has published its Post-UTME screening timetable. Candidates who scored 200 and above in JAMB are eligible to participate.</p>
+              <div class="news-card-footer">
+                <span class="cat uni">Universities</span>
+                <span class="time-label">3 days ago</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-card-icon" style="background: var(--bqm-green-l);">📋</div>
+            <div class="news-card-body">
+              <h3>WAEC releases May/June 2025 timetable — exams begin April 28</h3>
+              <p>The West African Examinations Council has published the full timetable for the 2025 May/June WASSCE. Candidates are urged to download and prepare accordingly.</p>
+              <div class="news-card-footer">
+                <span class="cat waec">WAEC/NECO</span>
+                <span class="time-label">4 days ago</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-card-icon" style="background: #F0FDF4;">🏫</div>
+            <div class="news-card-body">
+              <h3>ASUU suspends planned strike after FG resumes salary negotiations</h3>
+              <p>The Academic Staff Union of Universities has called off its planned warning strike after the Federal Government agreed to resume talks on outstanding salary arrears and welfare packages.</p>
+              <div class="news-card-footer">
+                <span class="cat campus">Campus</span>
+                <span class="time-label">5 days ago</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-card-icon" style="background: #EEF2FF;">🎓</div>
+            <div class="news-card-body">
+              <h3>FGN Bilateral Education Award 2025 — applications close June 30</h3>
+              <p>The Federal Government of Nigeria Bilateral Education Agreement scholarship for study abroad is still accepting applications. Eligible fields include Science, Engineering, and Agriculture.</p>
+              <div class="news-card-footer">
+                <span class="cat schol">Scholarship</span>
+                <span class="time-label">6 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="news-sidebar">
+        <div class="widget">
+          <div class="widget-header">🔥 Trending Now</div>
+          <div class="widget-body">
+            <div class="trending-item">
+              <span class="trending-num">01</span>
+              <div>
+                <div class="trending-text">How to check 2025 JAMB results via SMS</div>
+                <div class="trending-meta">12.4k views · 2 hrs ago</div>
+              </div>
+            </div>
+            <div class="trending-item">
+              <span class="trending-num">02</span>
+              <div>
+                <div class="trending-text">MTN Scholarship requirements — full list</div>
+                <div class="trending-meta">8.1k views · 1 day ago</div>
+              </div>
+            </div>
+            <div class="trending-item">
+              <span class="trending-num">03</span>
+              <div>
+                <div class="trending-text">NELFUND — how to apply step by step</div>
+                <div class="trending-meta">6.7k views · 2 days ago</div>
+              </div>
+            </div>
+            <div class="trending-item">
+              <span class="trending-num">04</span>
+              <div>
+                <div class="trending-text">Post-UTME aggregate calculator — UNILAG</div>
+                <div class="trending-meta">5.2k views · 3 days ago</div>
+              </div>
+            </div>
+            <div class="trending-item">
+              <span class="trending-num">05</span>
+              <div>
+                <div class="trending-text">WAEC 2025 timetable — download PDF</div>
+                <div class="trending-meta">4.9k views · 4 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-header">🏛️ University News</div>
+          <div class="widget-body">
+            <div class="uni-item">
+              <div class="uni-avatar">UL</div>
+              <div class="uni-info">
+                <h4>University of Lagos</h4>
+                <p>Post-UTME dates released</p>
+              </div>
+              <div class="uni-dot active"></div>
+            </div>
+            <div class="uni-item">
+              <div class="uni-avatar">UI</div>
+              <div class="uni-info">
+                <h4>University of Ibadan</h4>
+                <p>Resumption date announced</p>
+              </div>
+              <div class="uni-dot active"></div>
+            </div>
+            <div class="uni-item">
+              <div class="uni-avatar">OAU</div>
+              <div class="uni-info">
+                <h4>Obafemi Awolowo Univ.</h4>
+                <p>No new updates</p>
+              </div>
+              <div class="uni-dot quiet"></div>
+            </div>
+            <div class="uni-item">
+              <div class="uni-avatar">ABU</div>
+              <div class="uni-info">
+                <h4>Ahmadu Bello Univ.</h4>
+                <p>Exam schedule published</p>
+              </div>
+              <div class="uni-dot active"></div>
+            </div>
+            <div class="uni-item">
+              <div class="uni-avatar">UNN</div>
+              <div class="uni-info">
+                <h4>Univ. of Nigeria, Nsukka</h4>
+                <p>No new updates</p>
+              </div>
+              <div class="uni-dot quiet"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CAMPUS CONNECT PAGE ═══ -->
+  <div id="page-connect">
+    <div class="connect-layout">
+
+      <!-- LEFT: COMMUNITY -->
+      <div>
+        <!-- Sub-tabs -->
+        <div class="connect-tabs">
+          <button class="connect-tab active" onclick="switchConnect('forum', this)">💬 Forum</button>
+          <button class="connect-tab" onclick="switchConnect('partners', this)">🤝 Study Partners</button>
+          <button class="connect-tab" onclick="switchConnect('reviews', this)">⭐ Course Reviews</button>
+          <button class="connect-tab" onclick="switchConnect('events', this)">📅 Events</button>
+          <button class="connect-tab" onclick="switchConnect('confessions', this)">🎭 Confessions</button>
+        </div>
+
+        <!-- FORUM -->
+        <div class="connect-panel active" id="connect-forum">
+          <div class="compose-box">
+            <div class="compose-avatar">AO</div>
+            <div style="flex:1">
+              <textarea class="compose-input" placeholder="Ask a question or start a discussion..." rows="2"></textarea>
+              <div class="compose-actions">
+                <button class="btn-sm ghost">📎 Attach</button>
+                <button class="btn-sm primary">Post</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="post-avatar" style="background: linear-gradient(135deg,#00A651,#007A3D);">TK</div>
+              <div class="post-meta">
+                <h4>Taiwo Kehinde</h4>
+                <p>300L · Pharmacy · OAU · 1 hour ago</p>
+              </div>
+              <div class="post-tag"><span class="cat jamb">JAMB</span></div>
+            </div>
+            <div class="post-body">
+              Anyone who scored above 280 in JAMB this year — which subject did you find hardest? For me it was Use of English, especially the comprehension section. Would love to know your prep strategy for next time. 🙏
+            </div>
+            <div class="post-actions">
+              <button class="post-action liked">❤️ 47</button>
+              <button class="post-action">💬 23 Replies</button>
+              <button class="post-action">🔗 Share</button>
+            </div>
+          </div>
+
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="post-avatar" style="background: linear-gradient(135deg,#FF6B00,#C2410C);">FA</div>
+              <div class="post-meta">
+                <h4>Fatima Abubakar</h4>
+                <p>200L · Economics · BUK · 3 hours ago</p>
+              </div>
+              <div class="post-tag"><span class="cat nelfund">NELFUND</span></div>
+            </div>
+            <div class="post-body">
+              Has anyone successfully received their NELFUND disbursement? My application was approved 3 weeks ago but the money hasn't dropped yet. My school is ABU Zaria. Please share your experience!
+            </div>
+            <div class="post-actions">
+              <button class="post-action">❤️ 31</button>
+              <button class="post-action">💬 41 Replies</button>
+              <button class="post-action">🔗 Share</button>
+            </div>
+          </div>
+
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="post-avatar" style="background: linear-gradient(135deg,#4338CA,#6366F1);">BO</div>
+              <div class="post-meta">
+                <h4>Bolu Ogundimu</h4>
+                <p>100L · Computer Science · UNILAG · 5 hours ago</p>
+              </div>
+              <div class="post-tag"><span class="cat schol">Scholarship</span></div>
+            </div>
+            <div class="post-body">
+              PSA: The MTN Foundation Scholarship portal is live! I just submitted my application. The essay question this year is about how tech can solve education challenges in Nigeria. Don't sleep on it — deadline is August 1. 🔥
+            </div>
+            <div class="post-actions">
+              <button class="post-action">❤️ 89</button>
+              <button class="post-action">💬 17 Replies</button>
+              <button class="post-action">🔗 Share</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDY PARTNERS -->
+        <div class="connect-panel" id="connect-partners">
+          <div class="compose-box" style="margin-bottom:16px;">
+            <div class="compose-avatar">AO</div>
+            <div style="flex:1">
+              <textarea class="compose-input" placeholder="Looking for a study partner? Describe what you need..." rows="2"></textarea>
+              <div class="compose-actions">
+                <button class="btn-sm primary">Find Partner</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-avatar" style="background: linear-gradient(135deg,#00A651,#007A3D);">NN</div>
+            <div class="partner-info">
+              <h3>Ngozi Nwachukwu</h3>
+              <p>300L · Biochemistry · UNIBEN · Online now</p>
+              <div class="partner-tags">
+                <span class="partner-tag">Chemistry</span>
+                <span class="partner-tag">Biology</span>
+                <span class="partner-tag">JAMB Prep</span>
+                <span class="partner-tag">Morning sessions</span>
+              </div>
+            </div>
+            <button class="partner-btn">Connect</button>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-avatar" style="background: linear-gradient(135deg,#4338CA,#6366F1);">AY</div>
+            <div class="partner-info">
+              <h3>Ayomide Yusuf</h3>
+              <p>200L · Computer Science · UNILAG · Last seen 2h ago</p>
+              <div class="partner-tags">
+                <span class="partner-tag">Mathematics</span>
+                <span class="partner-tag">Physics</span>
+                <span class="partner-tag">Coding</span>
+                <span class="partner-tag">Evening sessions</span>
+              </div>
+            </div>
+            <button class="partner-btn">Connect</button>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-avatar" style="background: linear-gradient(135deg,#FF6B00,#C2410C);">KA</div>
+            <div class="partner-info">
+              <h3>Khadijah Adeyemi</h3>
+              <p>100L · Medicine · UI · Last seen 1d ago</p>
+              <div class="partner-tags">
+                <span class="partner-tag">Biology</span>
+                <span class="partner-tag">Chemistry</span>
+                <span class="partner-tag">Post-UTME</span>
+                <span class="partner-tag">Weekend only</span>
+              </div>
+            </div>
+            <button class="partner-btn">Connect</button>
+          </div>
+        </div>
+
+        <!-- COURSE REVIEWS -->
+        <div class="connect-panel" id="connect-reviews">
+          <div class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-course">MTH 202 — Linear Algebra</div>
+                <div class="review-school">University of Lagos · 200 Level</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="stars">★★★★☆</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:3px;">4.0 / 5</div>
+              </div>
+            </div>
+            <div class="review-body">
+              The course itself is interesting but the lecturer moves very fast. Make sure you get past questions — at least 5 years. The exams are very calculation-heavy. If you understand eigenvalues and vector spaces, you'll be fine. Attendance matters a lot here.
+            </div>
+            <div class="review-footer">
+              <span>Anonymous · 200L CS · 2 weeks ago</span>
+              <span class="review-helpful">👍 Helpful (24)</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-course">PHY 202 — Electromagnetism</div>
+                <div class="review-school">Obafemi Awolowo University · 200 Level</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="stars">★★★☆☆</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:3px;">3.0 / 5</div>
+              </div>
+            </div>
+            <div class="review-body">
+              Honestly one of the toughest courses in 200L Physics. The lecturer is knowledgeable but the marking scheme is brutal. Start practising Maxwell's equations from week one. Form a study group — this course is best survived together.
+            </div>
+            <div class="review-footer">
+              <span>Anonymous · 200L Physics · 1 month ago</span>
+              <span class="review-helpful">👍 Helpful (18)</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-course">ECO 101 — Introduction to Economics</div>
+                <div class="review-school">Ahmadu Bello University · 100 Level</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="stars">★★★★★</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:3px;">5.0 / 5</div>
+              </div>
+            </div>
+            <div class="review-body">
+              Best course in 100L. Dr. Musa is an amazing lecturer — he makes real-world connections that help you understand theory deeply. Read your textbook, attend every class, and you will score well. Highly recommended elective if available to you.
+            </div>
+            <div class="review-footer">
+              <span>Anonymous · 100L Economics · 3 weeks ago</span>
+              <span class="review-helpful">👍 Helpful (37)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVENTS -->
+        <div class="connect-panel" id="connect-events">
+          <div class="event-card">
+            <div class="event-date"><div class="month">JUN</div><div class="day">22</div></div>
+            <div class="event-info">
+              <h3>BQM Live JAMB Q&A Session — Ask an Expert</h3>
+              <p>Join BQM's live session where top-scoring JAMB candidates share strategies, tips, and answer your questions in real time.</p>
+              <div class="event-chips">
+                <span class="event-chip online">Online · Zoom</span>
+                <span class="event-chip free">Free</span>
+              </div>
+            </div>
+            <button class="event-rsvp">RSVP</button>
+          </div>
+
+          <div class="event-card">
+            <div class="event-date"><div class="month">JUN</div><div class="day">28</div></div>
+            <div class="event-info">
+              <h3>Scholarship Workshop — How to Write a Winning Essay</h3>
+              <p>A hands-on workshop helping students craft compelling scholarship essays. Materials and feedback sessions included.</p>
+              <div class="event-chips">
+                <span class="event-chip online">Online · Google Meet</span>
+                <span class="event-chip free">Free</span>
+              </div>
+            </div>
+            <button class="event-rsvp">RSVP</button>
+          </div>
+
+          <div class="event-card">
+            <div class="event-date"><div class="month">JUL</div><div class="day">5</div></div>
+            <div class="event-info">
+              <h3>Campus Tech Fair 2025 — Innovations by Nigerian Students</h3>
+              <p>A physical showcase of projects built by Nigerian university students. Open to all. Prizes for the top 3 projects.</p>
+              <div class="event-chips">
+                <span class="event-chip physical">Physical · Lagos</span>
+                <span class="event-chip free">Free Entry</span>
+              </div>
+            </div>
+            <button class="event-rsvp">RSVP</button>
+          </div>
+
+          <div class="event-card">
+            <div class="event-date"><div class="month">JUL</div><div class="day">12</div></div>
+            <div class="event-info">
+              <h3>NELFUND Information Session — How to Apply & What to Expect</h3>
+              <p>BQM in partnership with student union leaders walks you through the NELFUND loan application process step by step.</p>
+              <div class="event-chips">
+                <span class="event-chip online">Online · Zoom</span>
+                <span class="event-chip free">Free</span>
+              </div>
+            </div>
+            <button class="event-rsvp">RSVP</button>
+          </div>
+        </div>
+
+        <!-- CONFESSIONS -->
+        <div class="connect-panel" id="connect-confessions">
+          <div class="compose-box">
+            <div class="compose-avatar" style="background: var(--bqm-orange-l); font-size:20px; color: var(--bqm-orange);">🎭</div>
+            <div style="flex:1">
+              <textarea class="compose-input" placeholder="Share anonymously — no name, no judgement..." rows="2"></textarea>
+              <div class="compose-actions">
+                <span style="font-size:12px; color: var(--muted);">🔒 100% anonymous</span>
+                <button class="btn-sm primary">Post Anonymously</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="confession-card">
+            <div class="confession-header">
+              <div class="anon-avatar">🎭</div>
+              <div>
+                <div class="anon-label">Anonymous Student</div>
+                <div class="anon-school">University of Lagos · 2 hours ago</div>
+              </div>
+            </div>
+            <div class="confession-text">I failed my JAMB the first time with a 187. I was too ashamed to tell my parents. I spent the next year on BQM's CBT practice — mostly past questions — and scored 271 on my second attempt. If you're retaking, don't give up. The failure was the best thing that happened to me.</div>
+            <div class="post-actions">
+              <button class="post-action">❤️ 203</button>
+              <button class="post-action">💬 38 Replies</button>
+            </div>
+          </div>
+
+          <div class="confession-card">
+            <div class="confession-header">
+              <div class="anon-avatar">🎭</div>
+              <div>
+                <div class="anon-label">Anonymous Student</div>
+                <div class="anon-school">Obafemi Awolowo University · 6 hours ago</div>
+              </div>
+            </div>
+            <div class="confession-text">My CGPA dropped from 4.5 to 3.8 in one semester because I took too many units while working part-time to support my family. I don't regret it — but I wish someone had told me it was okay to drop a course and protect your grade. Academic pressure in Nigerian universities is no joke.</div>
+            <div class="post-actions">
+              <button class="post-action">❤️ 156</button>
+              <button class="post-action">💬 29 Replies</button>
+            </div>
+          </div>
+
+          <div class="confession-card">
+            <div class="confession-header">
+              <div class="anon-avatar">🎭</div>
+              <div>
+                <div class="anon-label">Anonymous Student</div>
+                <div class="anon-school">University of Ibadan · 1 day ago</div>
+              </div>
+            </div>
+            <div class="confession-text">I applied for 5 scholarships this year. Rejected by 4. Just got an email today — I won the NNPC/SNEPCo scholarship. ₦300k and tuition covered. I almost didn't apply because I thought my CGPA wasn't impressive enough. Please apply. You never know.</div>
+            <div class="post-actions">
+              <button class="post-action liked">❤️ 412</button>
+              <button class="post-action">💬 64 Replies</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="connect-sidebar">
+        <div class="stats-mini">
+          <div class="stat-mini-card">
+            <div class="stat-mini-val">4.2k</div>
+            <div class="stat-mini-label">Students Online</div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="stat-mini-val">892</div>
+            <div class="stat-mini-label">Posts Today</div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="stat-mini-val">127</div>
+            <div class="stat-mini-label">Active Threads</div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="stat-mini-val">38</div>
+            <div class="stat-mini-label">Events This Month</div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-header">🟢 Students Online Now</div>
+          <div class="widget-body">
+            <div class="online-list">
+              <div class="online-user">
+                <div class="online-avatar" style="background: linear-gradient(135deg,#00A651,#007A3D);">TK<span class="online-dot"></span></div>
+                <div class="online-info"><h4>Taiwo Kehinde</h4><p>OAU · Pharmacy</p></div>
+              </div>
+              <div class="online-user">
+                <div class="online-avatar" style="background: linear-gradient(135deg,#4338CA,#6366F1);">FA<span class="online-dot"></span></div>
+                <div class="online-info"><h4>Fatima Abubakar</h4><p>BUK · Economics</p></div>
+              </div>
+              <div class="online-user">
+                <div class="online-avatar" style="background: linear-gradient(135deg,#FF6B00,#C2410C);">BO<span class="online-dot"></span></div>
+                <div class="online-info"><h4>Bolu Ogundimu</h4><p>UNILAG · CS</p></div>
+              </div>
+              <div class="online-user">
+                <div class="online-avatar" style="background: linear-gradient(135deg,#0D1B2A,#1A2E44);">NN<span class="online-dot"></span></div>
+                <div class="online-info"><h4>Ngozi Nwachukwu</h4><p>UNIBEN · Biochemistry</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-header">🔥 Hot Topics</div>
+          <div class="widget-body">
+            <div class="trending-item">
+              <span class="trending-num">01</span>
+              <div>
+                <div class="trending-text">JAMB 2025 cut-off — what score is safe?</div>
+                <div class="trending-meta">341 replies</div>
+              </div>
+            </div>
+            <div class="trending-item">
+              <span class="trending-num">02</span>
+              <div>
+                <div class="trending-text">NELFUND — my experience so far</div>
+                <div class="trending-meta">218 replies</div>
+              </div>
+            </div>
+            <div class="trending-item">
+              <span class="trending-num">03</span>
+              <div>
+                <div class="trending-text">Best CBT practice resources for Chemistry</div>
+                <div class="trending-meta">97 replies</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function switchPage(name, btn) {
+    document.getElementById('page-news').style.display = name === 'news' ? 'block' : 'none';
+    document.getElementById('page-connect').style.display = name === 'connect' ? 'block' : 'none';
+    document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function setFilter(btn) {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function switchConnect(name, btn) {
+    document.querySelectorAll('.connect-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.connect-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('connect-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

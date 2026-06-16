@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BQM News — Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green:   #00A651;
+    --green-d: #007A3D;
+    --green-l: #E6F7EE;
+    --orange:  #FF6B00;
+    --orange-l:#FFF1E6;
+    --navy:    #0D1B2A;
+    --navy-2:  #1A2E44;
+    --ink:     #111827;
+    --muted:   #6B7280;
+    --border:  #E5E7EB;
+    --surface: #F9FAFB;
+    --white:   #FFFFFF;
+    --r: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    grid-row: 1 / -1;
+    background: var(--navy); color: #fff;
+    display: flex; flex-direction: column;
+    padding: 0 0 24px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar-brand {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand-logo {
+    width: 40px; height: 40px; background: var(--green);
+    border-radius: 10px; display: grid; place-items: center;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 14px; color: #fff;
+  }
+  .brand-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; line-height: 1.2; }
+  .brand-name span { font-size: 11px; font-weight: 400; color: rgba(255,255,255,.5); display: block; }
+  .sidebar-section { padding: 20px 16px 4px; }
+  .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,.35); padding: 0 8px 8px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; color: rgba(255,255,255,.65);
+    cursor: pointer; transition: all .18s; text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .nav-item.active { background: var(--green); color: #fff; }
+  .nav-item .nav-icon { width: 18px; text-align: center; font-size: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--orange); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
+  .sidebar-footer { margin-top: auto; padding: 16px 16px 0; border-top: 1px solid rgba(255,255,255,.08); }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-left h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; }
+  .topbar-left p { font-size: 13px; color: var(--muted); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .btn-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--white);
+    display: grid; place-items: center; cursor: pointer; font-size: 16px;
+    position: relative; transition: background .15s;
+  }
+  .btn-icon:hover { background: var(--surface); }
+  .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); border: 2px solid #fff; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--green), var(--green-d));
+    color: #fff; font-weight: 700; font-size: 14px;
+    display: grid; place-items: center; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── MAIN ── */
+  .main { overflow-y: auto; }
+
+  /* ── TICKER ── */
+  .ticker {
+    background: var(--navy); padding: 10px 32px;
+    display: flex; align-items: center; gap: 16px; overflow: hidden;
+  }
+  .ticker-label {
+    background: var(--green); color: #fff;
+    font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 999px; flex-shrink: 0;
+  }
+  .ticker-track { flex: 1; overflow: hidden; }
+  .ticker-inner {
+    display: flex; gap: 60px; white-space: nowrap;
+    animation: ticker 30s linear infinite;
+    font-size: 13px; color: rgba(255,255,255,.75); font-weight: 500;
+  }
+  .ticker-inner span { display: flex; align-items: center; gap: 8px; }
+  .ticker-sep { color: rgba(255,255,255,.2); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── CATEGORY MENU BAR ── */
+  .cat-menu-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 68px; z-index: 40;
+  }
+  .cat-menu {
+    display: flex; align-items: center; gap: 0;
+    padding: 0 32px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cat-menu::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 20px; height: 52px;
+    font-size: 13.5px; font-weight: 600; font-family: inherit;
+    color: var(--muted); border: none; background: none; cursor: pointer;
+    border-bottom: 3px solid transparent; margin-bottom: -1px;
+    white-space: nowrap; transition: all .18s; flex-shrink: 0;
+  }
+  .cat-btn:hover { color: var(--ink); }
+  .cat-btn.active { color: var(--navy); border-bottom-color: var(--green); }
+  .cat-btn .cat-emoji { font-size: 15px; }
+  .cat-count {
+    font-size: 10px; font-weight: 700; padding: 2px 6px;
+    border-radius: 999px; background: var(--surface); color: var(--muted);
+  }
+  .cat-btn.active .cat-count { background: var(--green-l); color: var(--green-d); }
+
+  /* ── CONTENT AREA ── */
+  .content-area {
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* ── FEED ── */
+  .feed { display: flex; flex-direction: column; gap: 0; }
+
+  /* HERO CARD */
+  .hero-card {
+    border-radius: var(--r); overflow: hidden;
+    background: var(--navy); margin-bottom: 24px;
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+    box-shadow: var(--shadow);
+  }
+  .hero-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .hero-img {
+    height: 240px; position: relative;
+    background: linear-gradient(135deg, #0A2A1A 0%, var(--navy) 100%);
+    overflow: hidden;
+  }
+  .hero-img-bg {
+    position: absolute; inset: 0; font-size: 160px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: .08; line-height: 1;
+  }
+  .hero-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(13,27,42,.95) 0%, rgba(13,27,42,.3) 60%, transparent 100%);
+  }
+  .hero-img-content {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 24px;
+  }
+  .hero-cat {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 800; color: #fff;
+    line-height: 1.25; margin-bottom: 8px;
+  }
+  .hero-meta { font-size: 12px; color: rgba(255,255,255,.5); display: flex; align-items: center; gap: 10px; }
+  .hero-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.3); }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 4px 0 18px;
+  }
+  .section-divider-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); white-space: nowrap;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* NEWS CARDS */
+  .news-card {
+    display: grid; grid-template-columns: 1fr 88px;
+    gap: 16px; padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: all .15s;
+  }
+  .news-card:last-child { border-bottom: none; }
+  .news-card:hover .nc-title { color: var(--green); }
+  .nc-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .nc-cat {
+    font-size: 10px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 999px;
+  }
+  .nc-cat.jamb    { background: var(--green-l); color: var(--green-d); }
+  .nc-cat.nelfund { background: var(--orange-l); color: #C2410C; }
+  .nc-cat.schol   { background: #EEF2FF; color: #4338CA; }
+  .nc-cat.campus  { background: #F0FDF4; color: #166534; }
+  .nc-cat.uni     { background: #FDF4FF; color: #7E22CE; }
+  .nc-cat.waec    { background: #FFF7ED; color: #92400E; }
+  .nc-time { font-size: 11px; color: var(--muted); }
+  .nc-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; transition: color .15s; }
+  .nc-excerpt { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .nc-footer { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  .nc-read { font-size: 12px; color: var(--muted); }
+  .nc-reactions { display: flex; gap: 8px; }
+  .nc-reaction { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .nc-thumb {
+    width: 88px; height: 88px; border-radius: 10px;
+    overflow: hidden; flex-shrink: 0;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    font-size: 36px; align-self: center;
+  }
+
+  /* LOAD MORE */
+  .load-more {
+    margin-top: 20px; padding: 12px 24px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; background: var(--white); color: var(--ink);
+    transition: all .15s; width: 100%;
+  }
+  .load-more:hover { border-color: var(--green); color: var(--green); }
+
+  /* ── RIGHT SIDEBAR ── */
+  .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+  .widget { background: var(--white); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
+  .widget-header {
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between;
+  }
+  .widget-header a { font-size: 12px; color: var(--green); font-weight: 600; text-decoration: none; cursor: pointer; }
+  .widget-body { padding: 6px 0; }
+
+  /* Trending */
+  .trend-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 12px 18px; cursor: pointer; transition: background .15s;
+  }
+  .trend-item:hover { background: var(--surface); }
+  .trend-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 900; color: var(--border); line-height: 1; flex-shrink: 0; width: 26px; }
+  .trend-info { flex: 1; }
+  .trend-title { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+  .trend-meta { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+
+  /* Uni tracker */
+  .uni-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 18px; cursor: pointer; transition: background .15s;
+    border-bottom: 1px solid var(--border);
+  }
+  .uni-item:last-child { border-bottom: none; }
+  .uni-item:hover { background: var(--surface); }
+  .uni-av {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: var(--navy); color: #fff; font-size: 9px; font-weight: 800;
+    display: grid; place-items: center; flex-shrink: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; line-height: 1.2;
+  }
+  .uni-info h4 { font-size: 13px; font-weight: 600; }
+  .uni-info p  { font-size: 11px; color: var(--muted); }
+  .uni-dot { width: 7px; height: 7px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+  .uni-dot.live { background: var(--green); box-shadow: 0 0 0 3px var(--green-l); }
+  .uni-dot.quiet { background: var(--border); }
+
+  /* Newsletter */
+  .newsletter-widget {
+    background: linear-gradient(135deg, var(--navy) 0%, #0A2A1A 100%);
+    border-radius: var(--r); padding: 22px 18px; color: #fff;
+  }
+  .newsletter-widget h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+  .newsletter-widget p { font-size: 12.5px; color: rgba(255,255,255,.65); line-height: 1.5; margin-bottom: 14px; }
+  .newsletter-input {
+    width: 100%; padding: 10px 12px; border-radius: 9px; border: none;
+    font-size: 13px; font-family: inherit; margin-bottom: 8px; outline: none;
+  }
+  .newsletter-btn {
+    width: 100%; padding: 10px; border-radius: 9px; border: none;
+    background: var(--green); color: #fff; font-size: 13px; font-weight: 700;
+    font-family: inherit; cursor: pointer; transition: background .15s;
+  }
+  .newsletter-btn:hover { background: var(--green-d); }
+
+  /* ── CATEGORY PANELS ── */
+  .cat-panel { display: none; }
+  .cat-panel.active { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .content-area { grid-template-columns: 1fr; }
+    .right-col { display: none; }
+  }
+  @media (max-width: 768px) {
+    body { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content-area { padding: 20px 16px; }
+    .topbar { padding: 0 16px; }
+    .ticker { padding: 10px 16px; }
+    .cat-menu { padding: 0 16px; }
+    .hero-title { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">BQ</div>
+    <div class="brand-name">Big Quams Media <span>Student Portal</span></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <a href="#" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎯</span> CBT Practice <span class="nav-badge">New</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">📊</span> GPA Tracker</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Scholarships</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Resources</div>
+    <a href="#" class="nav-item"><span class="nav-icon">📚</span> eLibrary</a>
+    <a href="#" class="nav-item"><span class="nav-icon">💰</span> NELFUND Loans</a>
+    <a href="#" class="nav-item active"><span class="nav-icon">📰</span> News Feed <span class="nav-badge">7</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon">🎓</span> Campus Connect</a>
+    <a href="#" class="nav-item"><span class="nav-icon">🧮</span> Calculators</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <a href="#" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+    <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="#" class="nav-item" style="color:#EF4444;"><span class="nav-icon">🚪</span> Log Out</a>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <h1>News Feed</h1>
+    <p>Monday, June 15, 2026</p>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-icon">🔔<span class="notif-dot"></span></button>
+    <button class="btn-icon">🔍</button>
+    <div class="avatar">AO</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <span class="ticker-label">Live</span>
+    <div class="ticker-track">
+      <div class="ticker-inner">
+        <span>📋 JAMB releases 2025 UTME results — check via portal <span class="ticker-sep">·</span></span>
+        <span>💰 NELFUND extends disbursement to 28 more institutions <span class="ticker-sep">·</span></span>
+        <span>🏆 MTN Foundation Scholarship 2025 portal now open <span class="ticker-sep">·</span></span>
+        <span>🏛️ UNILAG Post-UTME screening: August 10–14 <span class="ticker-sep">·</span></span>
+        <span>📋 WAEC 2025 May/June timetable published <span class="ticker-sep">·</span></span>
+        <span>📋 JAMB releases 2025 UTME results — check via portal <span class="ticker-sep">·</span></span>
+        <span>💰 NELFUND extends disbursement to 28 more institutions <span class="ticker-sep">·</span></span>
+        <span>🏆 MTN Foundation Scholarship 2025 portal now open <span class="ticker-sep">·</span></span>
+        <span>🏛️ UNILAG Post-UTME screening: August 10–14 <span class="ticker-sep">·</span></span>
+        <span>📋 WAEC 2025 May/June timetable published <span class="ticker-sep">·</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY MENU BAR -->
+  <div class="cat-menu-wrap">
+    <nav class="cat-menu">
+      <button class="cat-btn active" onclick="switchCat('all', this)">
+        <span class="cat-emoji">🗞️</span> All News <span class="cat-count">24</span>
+      </button>
+      <button class="cat-btn" onclick="switchCat('jamb', this)">
+        <span class="cat-emoji">📋</span> JAMB <span class="cat-count">7</span>
+      </button>
+      <button class="cat-btn" onclick="switchCat('nelfund', this)">
+        <span class="cat-emoji">💰</span> NELFUND <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" onclick="switchCat('scholarships', this)">
+        <span class="cat-emoji">🏆</span> Scholarships <span class="cat-count">6</span>
+      </button>
+      <button class="cat-btn" onclick="switchCat('campus', this)">
+        <span class="cat-emoji">🏫</span> Campus Life <span class="cat-count">5</span>
+      </button>
+      <button class="cat-btn" onclick="switchCat('universities', this)">
+        <span class="cat-emoji">🏛️</span> Universities <span class="cat-count">8</span>
+      </button>
+      <button class="cat-btn" onclick="switchCat('waec', this)">
+        <span class="cat-emoji">📝</span> WAEC / NECO <span class="cat-count">3</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content-area">
+
+    <!-- FEED -->
+    <div class="feed">
+
+      <!-- ALL NEWS -->
+      <div class="cat-panel active" id="cat-all">
+
+        <!-- Hero -->
+        <div class="hero-card">
+          <div class="hero-img">
+            <div class="hero-img-bg">📋</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(0,166,81,.2); color:#4ADE80;">📋 JAMB · Featured</div>
+              <div class="hero-title">JAMB releases 2025 UTME results — over 1.9 million candidates can now access scores</div>
+              <div class="hero-meta">
+                <span>BQM Newsroom</span>
+                <span class="hero-meta-dot"></span>
+                <span>2 hours ago</span>
+                <span class="hero-meta-dot"></span>
+                <span>3 min read</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <span class="section-divider-label">Latest Stories</span>
+          <div class="section-divider-line"></div>
+        </div>
+
+        <div class="news-card">
+          <div>
+            <div class="nc-meta">
+              <span class="nc-cat nelfund">NELFUND</span>
+              <span class="nc-time">Yesterday · 4 min read</span>
+            </div>
+            <div class="nc-title">NELFUND disbursement extended to 28 more federal institutions — full list inside</div>
+            <div class="nc-excerpt">Students at newly-added polytechnics and universities can now apply for the student loan scheme. The disbursement window closes at the end of the month.</div>
+            <div class="nc-footer">
+              <span class="nc-read">💬 41 comments</span>
+              <span class="nc-read">👁 8.2k views</span>
+            </div>
+          </div>
+          <div class="nc-thumb">💰</div>
+        </div>
+
+        <div class="news-card">
+          <div>
+            <div class="nc-meta">
+              <span class="nc-cat schol">Scholarship</span>
+              <span class="nc-time">2 days ago · 3 min read</span>
+            </div>
+            <div class="nc-title">MTN Foundation 2025 Scholarship portal is open — deadline August 1</div>
+            <div class="nc-excerpt">Eligible students in 200L–400L studying STEM courses with a minimum 3.5 CGPA can now apply. The essay question this year focuses on tech's role in education.</div>
+            <div class="nc-footer">
+              <span class="nc-read">💬 17 comments</span>
+              <span class="nc-read">👁 12.4k views</span>
+            </div>
+          </div>
+          <div class="nc-thumb">🏆</div>
+        </div>
+
+        <div class="news-card">
+          <div>
+            <div class="nc-meta">
+              <span class="nc-cat uni">Universities</span>
+              <span class="nc-time">3 days ago · 2 min read</span>
+            </div>
+            <div class="nc-title">UNILAG releases Post-UTME screening schedule — August 10 to 14</div>
+            <div class="nc-excerpt">Candidates who scored 200 and above in the 2025 UTME are eligible to participate. Screening will be conducted in batches across multiple halls.</div>
+            <div class="nc-footer">
+              <span class="nc-read">💬 29 comments</span>
+              <span class="nc-read">👁 9.7k views</span>
+            </div>
+          </div>
+          <div class="nc-thumb">🏛️</div>
+        </div>
+
+        <div class="news-card">
+          <div>
+            <div class="nc-meta">
+              <span class="nc-cat waec">WAEC/NECO</span>
+              <span class="nc-time">4 days ago · 2 min read</span>
+            </div>
+            <div class="nc-title">WAEC releases May/June 2025 timetable — examinations begin April 28</div>
+            <div class="nc-excerpt">The West African Examinations Council has published the full timetable for the 2025 May/June WASSCE. Candidates are advised to download and prepare early.</div>
+            <div class="nc-footer">
+              <span class="nc-read">💬 11 comments</span>
+              <span class="nc-read">👁 7.1k views</span>
+            </div>
+          </div>
+          <div class="nc-thumb">📝</div>
+        </div>
+
+        <div class="news-card">
+          <div>
+            <div class="nc-meta">
+              <span class="nc-cat campus">Campus Life</span>
+              <span class="nc-time">5 days ago · 3 min read</span>
+            </div>
+            <div class="nc-title">ASUU suspends planned warning strike after FG resumes salary negotiations</div>
+            <div class="nc-excerpt">The Academic Staff Union of Universities has called off its planned industrial action after the Federal Government agreed to resume outstanding welfare discussions.</div>
+            <div class="nc-footer">
+              <span class="nc-read">💬 58 comments</span>
+              <span class="nc-read">👁 15.3k views</span>
+            </div>
+          </div>
+          <div class="nc-thumb">🏫</div>
+        </div>
+
+        <div class="news-card">
+          <div>
+            <div class="nc-meta">
+              <span class="nc-cat schol">Scholarship</span>
+              <span class="nc-time">6 days ago · 4 min read</span>
+            </div>
+            <div class="nc-title">FGN Bilateral Education Award 2025 — applications close June 30</div>
+            <div class="nc-excerpt">The Federal Government scholarship for overseas study is still accepting applications. Eligible fields include Science, Engineering, Medicine, and Agriculture.</div>
+            <div class="nc-footer">
+              <span class="nc-read">💬 23 comments</span>
+              <span class="nc-read">👁 6.8k views</span>
+            </div>
+          </div>
+          <div class="nc-thumb">🎓</div>
+        </div>
+
+        <button class="load-more">Load more stories →</button>
+      </div>
+
+      <!-- JAMB -->
+      <div class="cat-panel" id="cat-jamb">
+        <div class="hero-card">
+          <div class="hero-img" style="background: linear-gradient(135deg, #0A2A1A, #0D1B2A);">
+            <div class="hero-img-bg">📋</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(0,166,81,.2); color:#4ADE80;">📋 JAMB · Breaking</div>
+              <div class="hero-title">JAMB 2025 UTME results released — 1.9 million candidates can now check scores</div>
+              <div class="hero-meta"><span>BQM Newsroom</span><span class="hero-meta-dot"></span><span>2 hours ago</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"><span class="section-divider-label">JAMB Stories</span><div class="section-divider-line"></div></div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat jamb">JAMB</span><span class="nc-time">3 days ago</span></div>
+            <div class="nc-title">UNILAG Post-UTME cut-off set at 200 — here's what you need to know</div>
+            <div class="nc-excerpt">The University of Lagos has confirmed its cut-off mark for the 2025 admission cycle. Combined aggregate calculations explained.</div>
+            <div class="nc-footer"><span class="nc-read">💬 34 comments</span><span class="nc-read">👁 11.2k views</span></div>
+          </div>
+          <div class="nc-thumb">🏛️</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat jamb">JAMB</span><span class="nc-time">1 week ago</span></div>
+            <div class="nc-title">How to check your 2025 JAMB result via SMS and the JAMB portal</div>
+            <div class="nc-excerpt">Step-by-step guide to checking your UTME result using your phone number, registration number, or directly via the JAMB portal.</div>
+            <div class="nc-footer"><span class="nc-read">💬 88 comments</span><span class="nc-read">👁 21.7k views</span></div>
+          </div>
+          <div class="nc-thumb">📱</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat jamb">JAMB</span><span class="nc-time">2 weeks ago</span></div>
+            <div class="nc-title">JAMB 2025: Average score nationwide was 201 — analysis by subject and state</div>
+            <div class="nc-excerpt">BQM's breakdown of the 2025 UTME performance data showing trends across subjects and geopolitical zones.</div>
+            <div class="nc-footer"><span class="nc-read">💬 52 comments</span><span class="nc-read">👁 14.3k views</span></div>
+          </div>
+          <div class="nc-thumb">📊</div>
+        </div>
+        <button class="load-more">Load more JAMB stories →</button>
+      </div>
+
+      <!-- NELFUND -->
+      <div class="cat-panel" id="cat-nelfund">
+        <div class="hero-card">
+          <div class="hero-img" style="background: linear-gradient(135deg, #431407, #0D1B2A);">
+            <div class="hero-img-bg">💰</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(255,107,0,.2); color:#FB923C;">💰 NELFUND · Update</div>
+              <div class="hero-title">NELFUND disbursement extended to 28 more institutions — apply before end of month</div>
+              <div class="hero-meta"><span>BQM Newsroom</span><span class="hero-meta-dot"></span><span>Yesterday</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"><span class="section-divider-label">NELFUND Stories</span><div class="section-divider-line"></div></div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat nelfund">NELFUND</span><span class="nc-time">1 week ago</span></div>
+            <div class="nc-title">Step-by-step: How to apply for NELFUND student loan in 2025</div>
+            <div class="nc-excerpt">A full walkthrough of the NELFUND application portal, required documents, eligibility criteria, and what to expect after applying.</div>
+            <div class="nc-footer"><span class="nc-read">💬 103 comments</span><span class="nc-read">👁 18.9k views</span></div>
+          </div>
+          <div class="nc-thumb">📄</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat nelfund">NELFUND</span><span class="nc-time">2 weeks ago</span></div>
+            <div class="nc-title">NELFUND vs. bank loans — which is better for Nigerian students?</div>
+            <div class="nc-excerpt">A detailed comparison of interest rates, repayment schedules, eligibility, and flexibility between NELFUND and commercial bank student loans.</div>
+            <div class="nc-footer"><span class="nc-read">💬 67 comments</span><span class="nc-read">👁 10.4k views</span></div>
+          </div>
+          <div class="nc-thumb">🏦</div>
+        </div>
+        <button class="load-more">Load more NELFUND stories →</button>
+      </div>
+
+      <!-- SCHOLARSHIPS -->
+      <div class="cat-panel" id="cat-scholarships">
+        <div class="hero-card">
+          <div class="hero-img" style="background: linear-gradient(135deg, #1e1b4b, #0D1B2A);">
+            <div class="hero-img-bg">🏆</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(99,102,241,.25); color:#A5B4FC;">🏆 Scholarship · Deadline Alert</div>
+              <div class="hero-title">MTN Foundation 2025 portal open — here's everything you need to apply</div>
+              <div class="hero-meta"><span>BQM Newsroom</span><span class="hero-meta-dot"></span><span>2 days ago</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"><span class="section-divider-label">Scholarship Stories</span><div class="section-divider-line"></div></div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat schol">Scholarship</span><span class="nc-time">6 days ago</span></div>
+            <div class="nc-title">FGN Bilateral Education Award — applications close June 30</div>
+            <div class="nc-excerpt">Government overseas scholarship for Science, Engineering, Medicine, and Agriculture students. Open to 100–400 level students with strong academic records.</div>
+            <div class="nc-footer"><span class="nc-read">💬 23 comments</span><span class="nc-read">👁 6.8k views</span></div>
+          </div>
+          <div class="nc-thumb">🇳🇬</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat schol">Scholarship</span><span class="nc-time">1 week ago</span></div>
+            <div class="nc-title">NNPC/SNEPCo 2025 scholarship — deadline July 15, how to apply</div>
+            <div class="nc-excerpt">The NNPC/SNEPCo National Merit Scholarship for 200L and 300L students in STEM is open. Past winners share tips on writing a standout application.</div>
+            <div class="nc-footer"><span class="nc-read">💬 44 comments</span><span class="nc-read">👁 9.2k views</span></div>
+          </div>
+          <div class="nc-thumb">🛢️</div>
+        </div>
+        <button class="load-more">Load more scholarship stories →</button>
+      </div>
+
+      <!-- CAMPUS LIFE -->
+      <div class="cat-panel" id="cat-campus">
+        <div class="hero-card">
+          <div class="hero-img" style="background: linear-gradient(135deg, #052e16, #0D1B2A);">
+            <div class="hero-img-bg">🏫</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(34,197,94,.15); color:#86EFAC;">🏫 Campus Life · Update</div>
+              <div class="hero-title">ASUU suspends warning strike — FG resumes salary negotiations</div>
+              <div class="hero-meta"><span>BQM Newsroom</span><span class="hero-meta-dot"></span><span>5 days ago</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"><span class="section-divider-label">Campus Stories</span><div class="section-divider-line"></div></div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat campus">Campus Life</span><span class="nc-time">1 week ago</span></div>
+            <div class="nc-title">NUC gives universities 6-month deadline to upgrade facilities or face sanctions</div>
+            <div class="nc-excerpt">The National Universities Commission has issued a formal notice requiring all federal and state universities to address infrastructure gaps by year end.</div>
+            <div class="nc-footer"><span class="nc-read">💬 37 comments</span><span class="nc-read">👁 8.1k views</span></div>
+          </div>
+          <div class="nc-thumb">🏗️</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat campus">Campus Life</span><span class="nc-time">2 weeks ago</span></div>
+            <div class="nc-title">Student hostels crisis: BQM survey reveals 3 in 5 students live off-campus</div>
+            <div class="nc-excerpt">A new BQM survey across 12 Nigerian universities shows the scale of the accommodation crisis and how students are coping with rising rent in university towns.</div>
+            <div class="nc-footer"><span class="nc-read">💬 92 comments</span><span class="nc-read">👁 17.6k views</span></div>
+          </div>
+          <div class="nc-thumb">🏘️</div>
+        </div>
+        <button class="load-more">Load more campus stories →</button>
+      </div>
+
+      <!-- UNIVERSITIES -->
+      <div class="cat-panel" id="cat-universities">
+        <div class="hero-card">
+          <div class="hero-img" style="background: linear-gradient(135deg, #2e1065, #0D1B2A);">
+            <div class="hero-img-bg">🏛️</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(139,92,246,.2); color:#C4B5FD;">🏛️ Universities · Screening</div>
+              <div class="hero-title">UNILAG Post-UTME screening: August 10–14 — everything candidates need to know</div>
+              <div class="hero-meta"><span>BQM Newsroom</span><span class="hero-meta-dot"></span><span>3 days ago</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"><span class="section-divider-label">University Stories</span><div class="section-divider-line"></div></div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat uni">Universities</span><span class="nc-time">4 days ago</span></div>
+            <div class="nc-title">UI announces resumption date — 2025/2026 academic session begins September 15</div>
+            <div class="nc-excerpt">University of Ibadan has published its academic calendar for the new session, including registration deadlines, examination dates, and semester end dates.</div>
+            <div class="nc-footer"><span class="nc-read">💬 19 comments</span><span class="nc-read">👁 7.3k views</span></div>
+          </div>
+          <div class="nc-thumb">📅</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat uni">Universities</span><span class="nc-time">1 week ago</span></div>
+            <div class="nc-title">ABU Zaria releases 2025/2026 examination timetable for 100–400 level students</div>
+            <div class="nc-excerpt">Ahmadu Bello University has published its end-of-semester examination schedule. Students can download the full timetable from the university portal.</div>
+            <div class="nc-footer"><span class="nc-read">💬 14 comments</span><span class="nc-read">👁 5.9k views</span></div>
+          </div>
+          <div class="nc-thumb">📋</div>
+        </div>
+        <button class="load-more">Load more university stories →</button>
+      </div>
+
+      <!-- WAEC/NECO -->
+      <div class="cat-panel" id="cat-waec">
+        <div class="hero-card">
+          <div class="hero-img" style="background: linear-gradient(135deg, #431407, #1c0a00);">
+            <div class="hero-img-bg">📝</div>
+            <div class="hero-img-overlay"></div>
+            <div class="hero-img-content">
+              <div class="hero-cat" style="background:rgba(249,115,22,.2); color:#FCA5A5;">📝 WAEC · Timetable</div>
+              <div class="hero-title">WAEC releases May/June 2025 timetable — exams start April 28</div>
+              <div class="hero-meta"><span>BQM Newsroom</span><span class="hero-meta-dot"></span><span>4 days ago</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"><span class="section-divider-label">WAEC / NECO Stories</span><div class="section-divider-line"></div></div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat waec">WAEC/NECO</span><span class="nc-time">1 week ago</span></div>
+            <div class="nc-title">NECO 2025 registration portal opens — deadline and fee details</div>
+            <div class="nc-excerpt">The National Examinations Council has opened its registration portal for the 2025 SSCE Internal. Schools and private candidates can now register.</div>
+            <div class="nc-footer"><span class="nc-read">💬 31 comments</span><span class="nc-read">👁 8.8k views</span></div>
+          </div>
+          <div class="nc-thumb">📄</div>
+        </div>
+        <div class="news-card">
+          <div>
+            <div class="nc-meta"><span class="nc-cat waec">WAEC/NECO</span><span class="nc-time">2 weeks ago</span></div>
+            <div class="nc-title">WAEC announces 2025 result release date — candidates to check online</div>
+            <div class="nc-excerpt">The West African Examinations Council has announced that 2025 WASSCE results will be released on a specific date. Here is how to check yours.</div>
+            <div class="nc-footer"><span class="nc-read">💬 47 comments</span><span class="nc-read">👁 13.2k views</span></div>
+          </div>
+          <div class="nc-thumb">📊</div>
+        </div>
+        <button class="load-more">Load more WAEC/NECO stories →</button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="right-col">
+
+      <!-- Trending -->
+      <div class="widget">
+        <div class="widget-header">🔥 Trending <a>See all</a></div>
+        <div class="widget-body">
+          <div class="trend-item">
+            <span class="trend-num">01</span>
+            <div class="trend-info">
+              <div class="trend-title">How to check 2025 JAMB result via SMS</div>
+              <div class="trend-meta"><span class="nc-cat jamb" style="font-size:9px; padding: 2px 6px;">JAMB</span> 21.7k views</div>
+            </div>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">02</span>
+            <div class="trend-info">
+              <div class="trend-title">MTN Scholarship 2025 — full requirements</div>
+              <div class="trend-meta"><span class="nc-cat schol" style="font-size:9px; padding: 2px 6px;">Scholarship</span> 12.4k views</div>
+            </div>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">03</span>
+            <div class="trend-info">
+              <div class="trend-title">NELFUND step-by-step application guide</div>
+              <div class="trend-meta"><span class="nc-cat nelfund" style="font-size:9px; padding: 2px 6px;">NELFUND</span> 18.9k views</div>
+            </div>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">04</span>
+            <div class="trend-info">
+              <div class="trend-title">Student hostel crisis — BQM survey results</div>
+              <div class="trend-meta"><span class="nc-cat campus" style="font-size:9px; padding: 2px 6px;">Campus</span> 17.6k views</div>
+            </div>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">05</span>
+            <div class="trend-info">
+              <div class="trend-title">UNILAG Post-UTME screening guide 2025</div>
+              <div class="trend-meta"><span class="nc-cat uni" style="font-size:9px; padding: 2px 6px;">Universities</span> 9.7k views</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- University tracker -->
+      <div class="widget">
+        <div class="widget-header">🏛️ University Updates <a>All unis</a></div>
+        <div class="widget-body" style="padding: 0;">
+          <div class="uni-item">
+            <div class="uni-av">UNI LAG</div>
+            <div class="uni-info"><h4>University of Lagos</h4><p>Post-UTME dates released</p></div>
+            <div class="uni-dot live"></div>
+          </div>
+          <div class="uni-item">
+            <div class="uni-av">UI IBD</div>
+            <div class="uni-info"><h4>University of Ibadan</h4><p>Resumption date set</p></div>
+            <div class="uni-dot live"></div>
+          </div>
+          <div class="uni-item">
+            <div class="uni-av">ABU ZAR</div>
+            <div class="uni-info"><h4>Ahmadu Bello Univ.</h4><p>Exam timetable published</p></div>
+            <div class="uni-dot live"></div>
+          </div>
+          <div class="uni-item">
+            <div class="uni-av">OAU IFE</div>
+            <div class="uni-info"><h4>Obafemi Awolowo Univ.</h4><p>No new updates</p></div>
+            <div class="uni-dot quiet"></div>
+          </div>
+          <div class="uni-item">
+            <div class="uni-av">UNN NSK</div>
+            <div class="uni-info"><h4>Univ. of Nigeria, Nsukka</h4><p>No new updates</p></div>
+            <div class="uni-dot quiet"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="newsletter-widget">
+        <h3>📬 Stay in the loop</h3>
+        <p>Get BQM's weekly digest of the most important news for Nigerian students — delivered to your inbox every Sunday.</p>
+        <input class="newsletter-input" type="email" placeholder="your@email.com" />
+        <button class="newsletter-btn">Subscribe Free</button>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  function switchCat(name, btn) {
+    document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('cat-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
